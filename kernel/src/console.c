@@ -44,15 +44,16 @@ void
 console_init()
 {
     memset16(vram, make_attr(COLOUR_BLACK, COLOUR_LIGHT_GREY) << 8, width * height);
+    memset16(vram + width * height, (make_attr(COLOUR_RED,   COLOUR_WHITE) << 8) | 'X', width);
 }
 
 static void
 scroll_up()
 {
-    memcpy(vram + width * 2, vram, width * height * 2);
+    memcpy(vram, vram + width, width * (height - 1) * 2);
 
     uint16_t empty_attr = make_attr(COLOUR_BLACK, COLOUR_LIGHT_GREY) << 8;
-    memset16(vram + width * 2 * (height - 1), empty_attr, width);
+    memset16(vram + width * (height - 1), empty_attr, width);
 }
 
 static void

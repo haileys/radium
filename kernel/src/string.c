@@ -27,3 +27,12 @@ memset(void* ptr_, uint8_t c, size_t n)
         *ptr++ = c;
     }
 }
+
+void
+memset16(void* ptr_, uint16_t w, size_t n)
+{
+    uint16_t* ptr = ptr_;
+    while(n--) {
+        *ptr++ = w;
+    }
+}

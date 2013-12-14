@@ -1,7 +1,8 @@
 #include <console.h>
+#include <io.h>
 #include <string.h>
 
-enum {
+typedef enum {
     COLOUR_BLACK       = 0,
     COLOUR_BLUE        = 1,
     COLOUR_GREEN       = 2,
@@ -18,7 +19,14 @@ enum {
     COLOUR_LIGHT_PINK  = 13,
     COLOUR_YELLOW      = 14,
     COLOUR_WHITE       = 15,
-};
+}
+colour_t;
+
+static uint8_t
+make_attr(colour_t background, colour_t foreground)
+{
+    return (background << 4) | foreground;
+}
 
 typedef struct {
     uint8_t character;
@@ -35,14 +43,16 @@ static vchar_t* const vram = (void*)0xb8000;
 void
 console_init()
 {
-    memset(vram, 0, width * height * 2);
+    memset16(vram, make_attr(COLOUR_BLACK, COLOUR_LIGHT_GREY) << 8, width * height);
 }
 
 static void
 scroll_up()
 {
     memcpy(vram + width * 2, vram, width * height * 2);
-    memset(vram + width * 2 * (height - 1), 0, width * 2);
+
+    uint16_t empty_attr = make_attr(COLOUR_BLACK, COLOUR_LIGHT_GREY) << 8;
+    memset16(vram + width * 2 * (height - 1), empty_attr, width);
 }
 
 static void
@@ -54,6 +64,21 @@ newline()
         scroll_up();
         y = height - 1;
     }
+}
+
+static void
+update_cursor()
+{
+    // read base vga port from bios data area
+    uint16_t base_vga_port = *(uint16_t*)0x463;
+
+    uint16_t pos = y * width + x;
+
+    outb(base_vga_port, 0x0e);
+    outb(base_vga_port + 1, (pos >> 8) & 0xff);
+
+    outb(base_vga_port, 0x0f);
+    outb(base_vga_port + 1, pos & 0xff);
 }
 
 static void
@@ -83,6 +108,8 @@ console_puts(const char* str)
     while(*str) {
         putc(*str++);
     }
+
+    update_cursor();
 }
 
 void

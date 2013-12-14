@@ -13,4 +13,6 @@ typedef signed long long int64_t;
 
 typedef uint32_t size_t;
 
+typedef _Bool bool;
+
 #endif

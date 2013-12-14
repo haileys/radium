@@ -113,8 +113,73 @@ console_puts(const char* str)
 }
 
 void
+itoa(int n, char* out)
+{
+    int len = 0, negative = 0;
+
+    if(n == 0) {
+        out[len++] = '0';
+        out[len++] = 0;
+        return;
+    }
+
+    if(n < 0) {
+        negative = 1;
+        n *= -1;
+    }
+
+    while(n) {
+        out[len++] = '0' + (n % 10);
+        n /= 10;
+    }
+
+    if(negative) {
+        out[len++] = '-';
+    }
+
+    out[len] = 0;
+
+    for(int i = 0; i < len / 2; i++) {
+        int j = len - i - 1;
+        char c = out[j];
+        out[j] = out[i];
+        out[i] = c;
+    }
+}
+
+void
 printf(const char* format, ...)
 {
-    (void)format;
-    // TODO
+    uint32_t* va = (uint32_t*)&format + 1;
+    while(1) {
+        char c = *format++;
+
+        if(c == 0) {
+            break;
+        }
+
+        if(c != '%') {
+            putc(c);
+            continue;
+        }
+
+        switch(c = *format++) {
+            case 'd': {
+                char buff[16];
+                int n = *(int*)va++;
+                itoa(n, buff);
+                console_puts(buff);
+                break;
+            }
+            case 0: {
+                goto ret;
+            }
+            default: {
+                putc(c);
+                break;
+            }
+        }
+    }
+ret:
+    update_cursor();
 }

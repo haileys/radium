@@ -26,7 +26,7 @@ gdt_set_entry(gdt_selector_t sel, uint32_t base, uint32_t limit, gdt_privilege_t
                | ((priv & 3) << 5) // privilege
                | (1 << 4)          // dunno lol
                | ((type & 1) << 3) // code/data
-               | (1 << 2)          // data segments are always writable, code segments are always readable
+               | (1 << 1)          // data segments are always writable, code segments are always readable
                ;
     ent.limit_16_19_and_flags = ((limit >> 16) & 0x0f)
                               | (1 << 7) // 4 KiB granularity

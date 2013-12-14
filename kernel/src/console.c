@@ -112,7 +112,7 @@ console_puts(const char* str)
     update_cursor();
 }
 
-void
+static void
 itoa(int n, char* out)
 {
     int len = 0, negative = 0;
@@ -147,6 +147,31 @@ itoa(int n, char* out)
     }
 }
 
+static char
+hex_dig(uint32_t dig)
+{
+    if(dig <= 9) {
+        return '0' + dig;
+    } else if(dig >= 10 && dig <= 15) {
+        return 'a' + dig - 10;
+    }
+    return '?';
+}
+
+static void
+utox(uint32_t u, char* out)
+{
+    out[0] = hex_dig((u >> 28) & 0xf);
+    out[1] = hex_dig((u >> 24) & 0xf);
+    out[2] = hex_dig((u >> 20) & 0xf);
+    out[3] = hex_dig((u >> 16) & 0xf);
+    out[4] = hex_dig((u >> 12) & 0xf);
+    out[5] = hex_dig((u >>  8) & 0xf);
+    out[6] = hex_dig((u >>  4) & 0xf);
+    out[7] = hex_dig((u >>  0) & 0xf);
+    out[8] = 0;
+}
+
 void
 printf(const char* format, ...)
 {
@@ -168,6 +193,13 @@ printf(const char* format, ...)
                 char buff[16];
                 int n = *(int*)va++;
                 itoa(n, buff);
+                console_puts(buff);
+                break;
+            }
+            case 'x': {
+                char buff[16];
+                uint32_t u = *va++;
+                utox(u, buff);
                 console_puts(buff);
                 break;
             }

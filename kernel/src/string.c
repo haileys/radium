@@ -6,7 +6,7 @@ memcpy(void* dest_, void* src_, size_t n)
     char* dest = dest_;
     char* src = src_;
 
-    if(src < dest) {
+    if(src > dest) {
         while(n--) {
             *dest++ = *src++;
         }

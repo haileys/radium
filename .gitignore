@@ -1,1 +1,6 @@
 /.vagrant
+/hdd.base.img
+/hdd.img
+/kernel/radium.bin
+
+*.o

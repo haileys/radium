@@ -1,18 +1,17 @@
 #include <console.h>
+#include <idt.h>
 #include <gdt.h>
 
 void
 kmain()
 {
-    gdt_init();
     console_init();
 
+    gdt_init();
+    idt_init();
+
     console_puts("Hello world!\n");
-    console_puts("Printing some stuff to the screen!\n");
-
-    printf("1 + 2 == %d\n", 1 + 2);
-
-    console_puts("done :~)\n");
+    console_puts("Printing some stuff to the screen! ");
 
     for(;;);
 }

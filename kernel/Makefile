@@ -5,6 +5,8 @@ CFLAGS = \
 
 OBJECTS = \
 	src/console.o \
+	src/idt.o \
+	src/isrs.o \
 	src/gdt.o \
 	src/gdt_helper.o \
 	src/loader.o \

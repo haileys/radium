@@ -1,5 +1,9 @@
 .PHONY: clean kernel/radium.bin
 
+ifeq ($(shell uname),Darwin)
+$(error Cowardly refusing to run on Mac OS X)
+endif
+
 all: hdd.img
 
 hdd.img: hdd.base.img boot/grub/menu.lst kernel/radium.bin

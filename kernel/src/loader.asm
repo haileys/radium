@@ -1,6 +1,7 @@
 global loader
 global end_of_image
-global kstack_max
+
+extern kmain
 
 section .multiboot_header
 align 4
@@ -21,7 +22,7 @@ loader:
     or eax, 1 << 5  ; FPU NE bit
     mov cr0, eax
 
-    jmp $
+    call kmain
 
 section .bss
 align 4

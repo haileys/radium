@@ -1,9 +1,13 @@
 CFLAGS = \
 	-Wall -Wextra -pedantic -Werror -nostdlib -nostdinc -fno-builtin \
 	-nostartfiles -nodefaultlibs -fno-exceptions -ffreestanding \
-	-fno-stack-protector -fno-pic -std=c99 -m32 -iquote inc
+	-fno-stack-protector -fno-pic -std=c99 -m32 -I inc
 
-OBJECTS = src/loader.o
+OBJECTS = \
+	src/console.o \
+	src/loader.o \
+	src/main.o \
+	src/string.o \
 
 .PHONY: clean
 

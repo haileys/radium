@@ -1,7 +1,9 @@
+extern gdtr
 global gdt_reload
 
 section .text
 gdt_reload:
+    lgdt [gdtr]
     jmp 0x08:.flush_cs
 .flush_cs:
     mov eax, 0x10

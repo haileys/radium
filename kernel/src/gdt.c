@@ -11,7 +11,14 @@ typedef struct {
 }
 gdt_entry_t;
 
-gdt_entry_t gdt[5];
+static gdt_entry_t
+gdt[5];
+
+volatile struct {
+    uint16_t size;
+    gdt_entry_t* offset;
+} __attribute__((packed))
+gdtr;
 
 static void
 gdt_set_entry(gdt_selector_t sel, uint32_t base, uint32_t limit, gdt_privilege_t priv, gdt_type_t type)
@@ -34,7 +41,7 @@ gdt_set_entry(gdt_selector_t sel, uint32_t base, uint32_t limit, gdt_privilege_t
                               ;
     ent.base_24_31 = (base >> 24) & 0xff;
 
-    gdt[sel / 8] = ent;
+    gdt[sel / sizeof(gdt_entry_t)] = ent;
 }
 
 void
@@ -43,6 +50,9 @@ gdt_reload();
 void
 gdt_init()
 {
+    gdtr.size = sizeof(gdt) - 1;
+    gdtr.offset = gdt;
+
     gdt_set_entry(GDT_KERNEL_CODE, 0, 0xfffffffful, GDT_KERNEL, GDT_CODE);
     gdt_set_entry(GDT_KERNEL_DATA, 0, 0xfffffffful, GDT_KERNEL, GDT_DATA);
     gdt_set_entry(GDT_USER_CODE,   0, 0xfffffffful, GDT_USER,   GDT_CODE);

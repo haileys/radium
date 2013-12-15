@@ -1,6 +1,7 @@
 #include <console.h>
 #include <io.h>
 #include <string.h>
+#include <stdarg.h>
 
 typedef enum {
     COLOUR_BLACK       = 0,
@@ -176,7 +177,9 @@ utox(uint32_t u, char* out)
 void
 printf(const char* format, ...)
 {
-    uint32_t* va = (uint32_t*)&format + 1;
+    va_list va;
+    va_start(va, format);
+
     while(1) {
         char c = *format++;
 
@@ -192,16 +195,18 @@ printf(const char* format, ...)
         switch(c = *format++) {
             case 'd': {
                 char buff[16];
-                int n = *(int*)va++;
-                itoa(n, buff);
+                itoa(va_arg(va, int), buff);
                 console_puts(buff);
                 break;
             }
             case 'x': {
                 char buff[16];
-                uint32_t u = *va++;
-                utox(u, buff);
+                utox(va_arg(va, uint32_t), buff);
                 console_puts(buff);
+                break;
+            }
+            case 's': {
+                console_puts(va_arg(va, const char*));
                 break;
             }
             case 0: {
@@ -214,5 +219,6 @@ printf(const char* format, ...)
         }
     }
 ret:
+    va_end(va);
     update_cursor();
 }

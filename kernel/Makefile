@@ -11,6 +11,7 @@ OBJECTS = \
 	src/gdt_helper.o \
 	src/loader.o \
 	src/main.o \
+	src/panic.o \
 	src/string.o \
 
 .PHONY: clean

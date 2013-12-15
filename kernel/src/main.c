@@ -17,5 +17,7 @@ kmain(multiboot_info_t* mb, uint32_t magic)
 
     printf("Radium booted by %s.\n", (const char*)mb->boot_loader_name);
 
+    panic("test panic");
+
     for(;;);
 }

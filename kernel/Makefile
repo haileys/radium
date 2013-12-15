@@ -12,13 +12,15 @@ OBJECTS = \
 	src/loader.o \
 	src/main.o \
 	src/panic.o \
+	src/panic_helper.o \
 	src/string.o \
 
 .PHONY: clean
 
-radium.bin: linker.ld $(OBJECTS)
+radium.bin: linker.ld $(OBJECTS) script/embed_symbol_table.rb
 	@echo ld $@
-	@ld -o $@ -T $^
+	@ld -o $@ -T linker.ld $(OBJECTS)
+	ruby script/embed_symbol_table.rb
 
 %.o: %.c
 	@echo cc $@

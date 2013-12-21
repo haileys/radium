@@ -1,8 +1,8 @@
-#include <console.h>
-#include <multiboot.h>
-#include <paging.h>
-#include <panic.h>
-#include <string.h>
+#include "console.h"
+#include "multiboot.h"
+#include "paging.h"
+#include "panic.h"
+#include "string.h"
 
 static size_t
 kernel_end;

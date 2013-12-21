@@ -1,7 +1,7 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
-#include <stdarg.h>
+#include "stdarg.h"
 
 void
 console_init();

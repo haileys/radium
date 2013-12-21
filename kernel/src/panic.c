@@ -1,8 +1,8 @@
-#include <console.h>
-#include <idt.h>
-#include <panic.h>
-#include <stdarg.h>
-#include <types.h>
+#include "console.h"
+#include "idt.h"
+#include "panic.h"
+#include "stdarg.h"
+#include "types.h"
 
 #define RECORD_SIZE 32
 

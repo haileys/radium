@@ -1,8 +1,8 @@
-#include <console.h>
-#include <gdt.h>
-#include <idt.h>
-#include <io.h>
-#include <types.h>
+#include "console.h"
+#include "gdt.h"
+#include "idt.h"
+#include "io.h"
+#include "types.h"
 
 typedef struct {
     uint16_t offset_0_15;

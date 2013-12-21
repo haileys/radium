@@ -1,7 +1,8 @@
 #ifndef PAGING_H
 #define PAGING_H
 
-#include <types.h>
+#include "types.h"
+#include "multiboot.h"
 
 #define PAGE_SIZE 4096
 

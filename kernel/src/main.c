@@ -1,10 +1,10 @@
-#include <console.h>
-#include <gdt.h>
-#include <idt.h>
-#include <multiboot.h>
-#include <paging.h>
-#include <panic.h>
-#include <types.h>
+#include "console.h"
+#include "gdt.h"
+#include "idt.h"
+#include "multiboot.h"
+#include "paging.h"
+#include "panic.h"
+#include "types.h"
 
 void
 kmain(multiboot_info_t* mb, uint32_t magic)

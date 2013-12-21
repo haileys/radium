@@ -90,6 +90,20 @@ paging_init(multiboot_info_t* mb)
     identity_map_kernel();
 }
 
+static bool
+paging_enabled()
+{
+    uint32_t cr0;
+    __asm__("mov %0, cr0" : "=r"(cr0));
+    return !!(cr0 & (1 << 31));
+}
+
+void
+set_page_directory(phys_t page_directory)
+{
+    __asm__("mov cr3, %0" :: "r"(page_directory));
+}
+
 phys_t
 page_alloc_raw()
 {

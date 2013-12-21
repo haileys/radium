@@ -18,9 +18,6 @@ typedef enum {
 }
 page_access_t;
 
-bool
-paging_enabled();
-
 void
 set_page_directory(phys_t page_directory);
 

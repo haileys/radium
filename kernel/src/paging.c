@@ -29,7 +29,6 @@ page_alloc()
         panic("TODO - make page_alloc work when paging is enabled");
     } else {
         next_free_page = *(phys_t*)page;
-        memset((void*)page, 0, PAGE_SIZE);
     }
 
     return page;

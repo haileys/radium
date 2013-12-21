@@ -71,16 +71,12 @@ idt_load();
 void
 idt_init()
 {
-    interrupts_disable();
-
     remap_irqs();
     idt_init_asm();
 
     idtr.size = sizeof(idt) - 1;
     idtr.offset = idt;
     idt_load();
-
-    interrupts_enable();
 }
 
 void

@@ -3,25 +3,19 @@ global idt_load
 extern interrupts_register_isr
 extern idtr
 extern console_puts
+extern panic
 
-%macro isr_begin_handler 1
-    jmp isr_%1_end
-    isr_%1:
-        pusha
-%endmacro
-
-%macro isr_end_handler 1
-        mov al, 0x20
-        out 0xa0, al
-        out 0x20, al
-        popa
-        iret
-    isr_%1_end:
-
+%macro register_isr 1
     push isr_%1
     push %1
     call interrupts_register_isr
     add esp, 8
+%endmacro
+
+%macro ack_irq 0
+    mov al, 0x20
+    out 0xa0, al
+    out 0x20, al
 %endmacro
 
 section .text
@@ -30,15 +24,39 @@ idt_load:
     ret
 
 idt_init_asm:
-    isr_begin_handler 13 ; GPF
-        ; nop lol
-    isr_end_handler 13
+    register_isr 13
+    register_isr 14
+    register_isr 32
+    ret
 
-    isr_begin_handler 32 ; PIT
-        push dot
-        call console_puts
-        add esp, 4
-    isr_end_handler 32
-ret
+; general protection fault
+isr_13:
+    push .msg
+    call panic
+.msg db "general protection fault", 0
 
-dot db ".", 0
+; page fault
+isr_14:
+    ; setup something that looks like a normal stack frame so panic can get a
+    ; proper backtrace
+    pop eax ; pop EFLAGS
+    push ebp
+    mov ebp, esp
+
+    mov eax, cr2
+    push eax
+    push .msg
+    call panic
+    iret
+.msg db "page fault at 0x%x", 0
+
+; PIT irq
+isr_32:
+    pusha
+    push .dot
+    call console_puts
+    add esp, 4
+    ack_irq
+    popa
+    iret
+.dot db ".", 0

@@ -179,7 +179,13 @@ printf(const char* format, ...)
 {
     va_list va;
     va_start(va, format);
+    vprintf(format, va);
+    va_end(va);
+}
 
+void
+vprintf(const char* format, va_list va)
+{
     while(1) {
         char c = *format++;
 
@@ -219,6 +225,5 @@ printf(const char* format, ...)
         }
     }
 ret:
-    va_end(va);
     update_cursor();
 }

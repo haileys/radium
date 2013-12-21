@@ -3,6 +3,13 @@
 
 #include <types.h>
 
+#define PAGE_SIZE 4096
+
+#define PE_PRESENT    (1 << 0)
+#define PE_READ_WRITE (1 << 1)
+#define PE_USER       (1 << 2)
+#define PE_ADDR_MASK  (~(PAGE_SIZE - 1))
+
 typedef uint32_t virt_t;
 typedef uint32_t phys_t;
 

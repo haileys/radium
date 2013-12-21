@@ -4,18 +4,6 @@
 #include <panic.h>
 #include <string.h>
 
-#define PAGE_SIZE 4096
-
-#define PD_PRESENT    (1 << 0)
-#define PD_READ_WRITE (1 << 1)
-#define PD_USER       (1 << 2)
-#define PD_ADDR_MASK  ~(PAGE_SIZE - 1)
-
-#define PT_PRESENT    (1 << 0)
-#define PT_READ_WRITE (1 << 1)
-#define PT_USER       (1 << 2)
-#define PT_ADDR_MASK  ~(PAGE_SIZE - 1)
-
 static size_t
 kernel_end;
 
@@ -69,10 +57,10 @@ identity_map_kernel()
         size_t page_tab_i = addr / 4096 % 1024;
         uint32_t page_dir_ent = page_directory[page_dir_i];
         if(!page_dir_ent) {
-            page_dir_ent = page_directory[page_dir_i] = page_alloc_raw() | PD_PRESENT | PD_READ_WRITE;
+            page_dir_ent = page_directory[page_dir_i] = page_alloc_raw() | PE_PRESENT | PE_READ_WRITE;
         }
-        uint32_t* page_tab = (uint32_t*)(page_dir_ent & PD_ADDR_MASK);
-        page_tab[page_tab_i] = addr | PT_PRESENT | PT_READ_WRITE;
+        uint32_t* page_tab = (uint32_t*)(page_dir_ent & PE_ADDR_MASK);
+        page_tab[page_tab_i] = addr | PE_PRESENT | PE_READ_WRITE;
     }
 
     set_page_directory((phys_t)page_directory);

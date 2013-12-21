@@ -17,14 +17,7 @@ symbol_record_t;
 extern symbol_record_t panic_symbols[SYMBOL_ENTRIES];
 
 void
-panic_print_backtrace();
-
-static void __attribute__((noreturn))
-hlt()
-{
-    __asm__ volatile("hlt");
-    for(;;);
-}
+panic_print_backtrace() __attribute__((noreturn));
 
 void
 panic(const char* format, ...)
@@ -39,7 +32,6 @@ panic(const char* format, ...)
     va_end(va);
 
     panic_print_backtrace();
-    hlt();
 }
 
 void

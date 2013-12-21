@@ -24,4 +24,4 @@ panic_print_backtrace:
     add esp, 4
     jmp panic_print_backtrace
 .end_loop:
-    ret
+    hlt

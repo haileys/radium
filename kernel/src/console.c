@@ -215,6 +215,10 @@ vprintf(const char* format, va_list va)
                 console_puts(va_arg(va, const char*));
                 break;
             }
+            case 'c': {
+                putc(va_arg(va, char));
+                break;
+            }
             case 0: {
                 goto ret;
             }

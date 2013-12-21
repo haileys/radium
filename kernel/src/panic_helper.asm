@@ -19,9 +19,7 @@ panic_print_backtrace:
     pop ebp
     cmp dword [esp], 0
     je .end_loop
-    push dword [esp]
     call panic_print_backtrace_item
-    add esp, 4
     jmp panic_print_backtrace
 .end_loop:
     hlt

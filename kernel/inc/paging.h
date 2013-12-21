@@ -33,9 +33,9 @@ void
 paging_init(struct multiboot_info* mb);
 
 phys_t
-page_alloc_raw();
+page_alloc();
 
 void
-page_free_raw(phys_t addr);
+page_free(phys_t addr);
 
 #endif

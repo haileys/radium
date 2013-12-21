@@ -18,7 +18,7 @@ register_available_memory_region(multiboot_memory_map_t* region)
             continue;
         }
 
-        page_free_raw(addr);
+        page_free(addr);
         pages_registered++;
     }
 
@@ -43,7 +43,7 @@ register_available_memory(multiboot_info_t* mb)
 static void
 identity_map_kernel()
 {
-    uint32_t* page_directory = (uint32_t*)page_alloc_raw();
+    uint32_t* page_directory = (uint32_t*)page_alloc();
 
     // we start looping from PAGE_SIZE in order to leave the null page unmapped
     // accessing it will cause a GPF.
@@ -52,7 +52,7 @@ identity_map_kernel()
         size_t page_tab_i = addr / 4096 % 1024;
         uint32_t page_dir_ent = page_directory[page_dir_i];
         if(!page_dir_ent) {
-            page_dir_ent = page_directory[page_dir_i] = page_alloc_raw() | PE_PRESENT | PE_READ_WRITE;
+            page_dir_ent = page_directory[page_dir_i] = page_alloc() | PE_PRESENT | PE_READ_WRITE;
         }
         uint32_t* page_tab = (uint32_t*)(page_dir_ent & PE_ADDR_MASK);
         page_tab[page_tab_i] = addr | PE_PRESENT | PE_READ_WRITE;

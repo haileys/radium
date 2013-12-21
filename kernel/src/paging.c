@@ -21,26 +21,28 @@ set_page_directory(phys_t page_directory)
 }
 
 phys_t
-page_alloc_raw()
+page_alloc()
 {
+    phys_t page = next_free_page;
+
     if(paging_enabled()) {
-        panic("page_alloc_raw called while paging is enabled");
+        panic("TODO - make page_alloc work when paging is enabled");
+    } else {
+        next_free_page = *(phys_t*)page;
+        memset((void*)page, 0, PAGE_SIZE);
     }
 
-    phys_t page = next_free_page;
-    next_free_page = *(phys_t*)page;
-    memset((void*)page, 0, PAGE_SIZE);
     return page;
 }
 
 void
-page_free_raw(phys_t addr)
+page_free(phys_t addr)
 {
     if(paging_enabled()) {
-        panic("page_free_raw called while paging is enabled");
+        panic("TODO - make page_free work when paging is enabled");
+    } else {
+        *(phys_t*)addr = next_free_page;
     }
 
-    // TODO same comment as above
-    *(phys_t*)addr = next_free_page;
     next_free_page = addr;
 }

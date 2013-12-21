@@ -41,10 +41,8 @@ register_available_memory(multiboot_info_t* mb)
 }
 
 static void
-identity_map_kernel()
+identity_map_kernel(uint32_t* page_directory)
 {
-    uint32_t* page_directory = (uint32_t*)page_alloc();
-
     // we start looping from PAGE_SIZE in order to leave the null page unmapped
     // accessing it will cause a GPF.
     for(phys_t addr = PAGE_SIZE; addr <= kernel_end; addr += PAGE_SIZE) {
@@ -57,8 +55,6 @@ identity_map_kernel()
         uint32_t* page_tab = (uint32_t*)(page_dir_ent & PE_ADDR_MASK);
         page_tab[page_tab_i] = addr | PE_PRESENT | PE_READ_WRITE;
     }
-
-    set_page_directory((phys_t)page_directory);
 }
 
 void
@@ -70,5 +66,9 @@ paging_init(multiboot_info_t* mb)
     size_t pages_registered = register_available_memory(mb);
     printf("%d MiB available useful memory.\n", pages_registered * PAGE_SIZE / 1024 / 1024);
 
-    identity_map_kernel();
+    uint32_t* page_directory = (uint32_t*)page_alloc();
+
+    identity_map_kernel(page_directory);
+
+    set_page_directory((phys_t)page_directory);
 }

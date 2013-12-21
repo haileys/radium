@@ -4,6 +4,6 @@
 #include <multiboot.h>
 
 void
-panic(const char* message) __attribute__((noreturn));
+panic(const char* message, ...) __attribute__((noreturn));
 
 #endif

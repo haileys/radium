@@ -1,5 +1,7 @@
 #include <console.h>
+#include <idt.h>
 #include <panic.h>
+#include <stdarg.h>
 #include <types.h>
 
 #define RECORD_SIZE 32
@@ -13,6 +15,32 @@ symbol_record_t;
 #define SYMBOL_ENTRIES (65536 / RECORD_SIZE)
 
 extern symbol_record_t panic_symbols[SYMBOL_ENTRIES];
+
+void
+panic_print_backtrace();
+
+static void __attribute__((noreturn))
+hlt()
+{
+    __asm__ volatile("hlt");
+    for(;;);
+}
+
+void
+panic(const char* format, ...)
+{
+    interrupts_disable();
+
+    va_list va;
+    va_start(va, format);
+    printf("\npanic: ");
+    vprintf(format, va);
+    printf("\n");
+    va_end(va);
+
+    panic_print_backtrace();
+    hlt();
+}
 
 void
 panic_print_backtrace_item(uint32_t addr)

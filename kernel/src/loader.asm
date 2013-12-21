@@ -14,7 +14,8 @@ section .text
 align 4
 loader:
     mov esp, stack
-    push 0
+    push dword 0
+    push dword 0
     mov ebp, esp
 
     push eax ; multiboot magic number

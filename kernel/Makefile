@@ -12,6 +12,7 @@ OBJECTS = \
 	src/loader.o \
 	src/main.o \
 	src/paging.o \
+	src/paging_init.o \
 	src/panic.o \
 	src/panic_helper.o \
 	src/string.o \

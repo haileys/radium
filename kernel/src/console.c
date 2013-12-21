@@ -41,9 +41,14 @@ static const int width = 80, height = 25;
 
 static vchar_t* const vram = (void*)0xb8000;
 
+static uint16_t base_vga_port;
+
 void
 console_init()
 {
+    // read base vga port from bios data area
+    base_vga_port = *(uint16_t*)0x463;
+
     memset16(vram, make_attr(COLOUR_BLACK, COLOUR_LIGHT_GREY) << 8, width * height);
     memset16(vram + width * height, (make_attr(COLOUR_RED,   COLOUR_WHITE) << 8) | 'X', width);
 }
@@ -71,9 +76,6 @@ newline()
 static void
 update_cursor()
 {
-    // read base vga port from bios data area
-    uint16_t base_vga_port = *(uint16_t*)0x463;
-
     uint16_t pos = y * width + x;
 
     outb(base_vga_port, 0x0e);

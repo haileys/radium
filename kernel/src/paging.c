@@ -101,6 +101,7 @@ page_map(virt_t virt_page, phys_t phys_page, int flags)
     if(!(pd_entry & PE_PRESENT)) {
         current_page_directory[page_dir_i] = page_alloc() | (flags & PE_FLAG_MASK);
         invlpg((virt_t)page_table);
+        memset(page_table, 0, 4096);
     }
 
     page_table[page_tab_i] = (phys_page & PE_ADDR_MASK) | (flags & PE_FLAG_MASK);

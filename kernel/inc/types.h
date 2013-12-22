@@ -19,4 +19,7 @@ typedef _Bool bool;
 
 #define NULL ((void*)0)
 
+typedef uint32_t virt_t;
+typedef uint32_t phys_t;
+
 #endif

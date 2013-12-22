@@ -9,9 +9,6 @@
 #define PE_FLAG_MASK  (PAGE_SIZE - 1)
 #define PE_ADDR_MASK  (~PE_FLAG_MASK)
 
-typedef uint32_t virt_t;
-typedef uint32_t phys_t;
-
 typedef enum {
     PE_PRESENT    = 1 << 0,
     PE_READ_WRITE = 1 << 1,

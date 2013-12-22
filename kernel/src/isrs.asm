@@ -53,10 +53,6 @@ isr_14:
 ; PIT irq
 isr_32:
     pusha
-    push .dot
-    call console_puts
-    add esp, 4
     ack_irq
     popa
     iret
-.dot db ".", 0

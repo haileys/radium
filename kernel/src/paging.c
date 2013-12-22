@@ -6,6 +6,9 @@
 static phys_t
 next_free_page;
 
+static uint32_t* const
+temp_page_entry = (void*)0xffc00000;
+
 #define FL_PAGING_ENABLED (1 << 31)
 
 static bool
@@ -28,13 +31,26 @@ set_page_directory(phys_t page_directory)
     __asm__("mov cr0, %0" :: "r"(cr0) : "memory");
 }
 
+static void
+invlpg(virt_t virt)
+{
+    __asm__ volatile("invlpg [%0]" :: "r"(virt) : "memory");
+}
+
 phys_t
 page_alloc()
 {
     phys_t page = next_free_page;
 
     if(paging_enabled()) {
-        panic("TODO - make page_alloc work when paging is enabled");
+        uint32_t old_null_page = *temp_page_entry;
+        *temp_page_entry = page | PE_PRESENT | PE_READ_WRITE;
+        invlpg(0);
+
+        next_free_page = *(phys_t*)NULL;
+
+        *temp_page_entry = old_null_page;
+        invlpg(0);
     } else {
         next_free_page = *(phys_t*)page;
     }
@@ -46,18 +62,19 @@ void
 page_free(phys_t addr)
 {
     if(paging_enabled()) {
-        panic("TODO - make page_free work when paging is enabled");
+        uint32_t old_null_page = *temp_page_entry;
+        *temp_page_entry = addr | PE_PRESENT | PE_READ_WRITE;
+        invlpg(0);
+
+        *(phys_t*)NULL = next_free_page;
+
+        *temp_page_entry = old_null_page;
+        invlpg(0);
     } else {
         *(phys_t*)addr = next_free_page;
     }
 
     next_free_page = addr;
-}
-
-static void
-invlpg(virt_t virt)
-{
-    __asm__ volatile("invlpg [%0]" :: "r"(virt) : "memory");
 }
 
 void

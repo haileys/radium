@@ -4,12 +4,30 @@
 #include "multiboot.h"
 #include "paging.h"
 #include "panic.h"
+#include "string.h"
 #include "types.h"
 
+static multiboot_info_t* mb;
+
+static multiboot_module_t*
+find_module(const char* name)
+{
+    multiboot_module_t* mods = (void*)mb->mods_addr;
+
+    for(size_t i = 0; i < mb->mods_count; i++) {
+        if(streq((const char*)mods[i].cmdline, name)) {
+            return &mods[i];
+        }
+    }
+
+    return NULL;
+}
+
 void
-kmain(multiboot_info_t* mb, uint32_t magic)
+kmain(multiboot_info_t* mb_, uint32_t magic)
 {
     (void)magic;
+    mb = mb_;
 
     interrupts_disable();
 
@@ -29,6 +47,11 @@ kmain(multiboot_info_t* mb, uint32_t magic)
     printf("Booted.\n");
 
     interrupts_enable();
+
+    multiboot_module_t* mod = find_module("/init.bin");
+    page_map(0x10000000, mod->mod_start, PE_PRESENT | PE_USER);
+
+    printf("--> %x\n", *(uint32_t*)0x10000000);
 
     while(1) {
         __asm__ volatile("hlt");

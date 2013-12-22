@@ -6,18 +6,26 @@
 static phys_t
 next_free_page;
 
+#define FL_PAGING_ENABLED (1 << 31)
+
 static bool
 paging_enabled()
 {
     uint32_t cr0;
     __asm__("mov %0, cr0" : "=r"(cr0));
-    return !!(cr0 & (1 << 31));
+    return !!(cr0 & FL_PAGING_ENABLED);
 }
 
 void
 set_page_directory(phys_t page_directory)
 {
+    uint32_t cr0;
+
     __asm__("mov cr3, %0" :: "r"(page_directory));
+
+    __asm__("mov %0, cr0" : "=r"(cr0));
+    cr0 |= FL_PAGING_ENABLED;
+    __asm__("mov cr0, %0" :: "r"(cr0) : "memory");
 }
 
 phys_t

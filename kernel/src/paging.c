@@ -87,7 +87,7 @@ page_free(phys_t addr)
 }
 
 void
-page_map(virt_t virt_page, phys_t phys_page, int flags)
+page_map(virt_t virt_page, phys_t phys_page, page_flags_t flags)
 {
     // page directories are always recursively mapped into themselves:
     uint32_t* current_page_directory = (uint32_t*)0xfffff000;

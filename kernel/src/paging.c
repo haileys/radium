@@ -1,4 +1,5 @@
 #include "console.h"
+#include "idt.h"
 #include "paging.h"
 #include "panic.h"
 #include "string.h"
@@ -43,6 +44,8 @@ page_alloc()
     phys_t page = next_free_page;
 
     if(paging_enabled()) {
+        interrupts_disable();
+
         uint32_t old_null_page = *temp_page_entry;
         *temp_page_entry = page | PE_PRESENT | PE_READ_WRITE;
         invlpg(0);
@@ -51,6 +54,8 @@ page_alloc()
 
         *temp_page_entry = old_null_page;
         invlpg(0);
+
+        interrupts_enable();
     } else {
         next_free_page = *(phys_t*)page;
     }
@@ -62,6 +67,8 @@ void
 page_free(phys_t addr)
 {
     if(paging_enabled()) {
+        interrupts_disable();
+
         uint32_t old_null_page = *temp_page_entry;
         *temp_page_entry = addr | PE_PRESENT | PE_READ_WRITE;
         invlpg(0);
@@ -70,6 +77,8 @@ page_free(phys_t addr)
 
         *temp_page_entry = old_null_page;
         invlpg(0);
+
+        interrupts_disable();
     } else {
         *(phys_t*)addr = next_free_page;
     }

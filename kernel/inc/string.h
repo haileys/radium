@@ -12,4 +12,7 @@ memset(void* ptr, uint8_t c, size_t n);
 void
 memset16(void* ptr, uint16_t w, size_t n);
 
+bool
+streq(const char* a, const char* b);
+
 #endif

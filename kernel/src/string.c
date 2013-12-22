@@ -36,3 +36,18 @@ memset16(void* ptr_, uint16_t w, size_t n)
         *ptr++ = w;
     }
 }
+
+bool
+streq(const char* a, const char* b)
+{
+    while(1) {
+        if(*a != *b) {
+            return false;
+        }
+        if(*a == 0) {
+            return true;
+        }
+        a++;
+        b++;
+    }
+}

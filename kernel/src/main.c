@@ -17,6 +17,11 @@ kmain(multiboot_info_t* mb, uint32_t magic)
 
     printf("Radium booting from %s.\n", (const char*)mb->boot_loader_name);
 
+    for(size_t i = 0; i < mb->mods_count; i++) {
+        multiboot_module_t* mods = (void*)mb->mods_addr;
+        paging_set_allocatable_start(mods[i].mod_end);
+    }
+
     gdt_init();
     idt_init();
     paging_init(mb);

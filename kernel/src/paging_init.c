@@ -3,7 +3,7 @@
 #include "paging.h"
 #include "string.h"
 
-static size_t
+static phys_t
 kernel_end;
 
 static phys_t
@@ -53,7 +53,7 @@ static void
 identity_map_kernel(uint32_t* page_directory)
 {
     // we start looping from PAGE_SIZE in order to leave the null page unmapped
-    // accessing it will cause a GPF.
+    // accessing it will cause a page fault.
     for(phys_t addr = PAGE_SIZE; addr <= kernel_end; addr += PAGE_SIZE) {
         size_t page_dir_i = addr / 4096 / 1024;
         size_t page_tab_i = addr / 4096 % 1024;
@@ -69,14 +69,23 @@ identity_map_kernel(uint32_t* page_directory)
 static void
 recursively_map_page_directory(uint32_t* page_directory)
 {
-    page_directory[1023] = (uint32_t)page_directory | PE_PRESENT | PE_READ_WRITE;
+    page_directory[1023] = (phys_t)page_directory | PE_PRESENT | PE_READ_WRITE;
+}
+
+void
+paging_set_allocatable_start(phys_t addr)
+{
+    if(addr > kernel_end) {
+        kernel_end = addr;
+    }
 }
 
 void
 paging_init(multiboot_info_t* mb)
 {
     extern int end_of_image;
-    kernel_end = (size_t)&end_of_image;
+    paging_set_allocatable_start((phys_t)&end_of_image);
+    printf("kernel_end = 0x%x\n", kernel_end);
 
     size_t pages_registered = register_available_memory(mb);
     printf("%d MiB available useful memory.\n", pages_registered * PAGE_SIZE / 1024 / 1024);

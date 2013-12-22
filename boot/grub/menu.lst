@@ -4,3 +4,4 @@ default 0
 title Radium
 root (hd0,0)
 kernel /boot/radium.bin
+module /init.bin

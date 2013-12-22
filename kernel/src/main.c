@@ -30,7 +30,7 @@ kmain(multiboot_info_t* mb, uint32_t magic)
 
     interrupts_enable();
 
-    *(int*)0xdeadbeef = 0;
-
-    for(;;);
+    while(1) {
+        __asm__ volatile("hlt");
+    }
 }

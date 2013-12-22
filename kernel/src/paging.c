@@ -45,3 +45,30 @@ page_free(phys_t addr)
 
     next_free_page = addr;
 }
+
+static void
+invlpg(virt_t virt)
+{
+    __asm__ volatile("invlpg [%0]" :: "r"(virt) : "memory");
+}
+
+void
+page_map(virt_t virt_page, phys_t phys_page, int flags)
+{
+    // page directories are always recursively mapped into themselves:
+    uint32_t* current_page_directory = (uint32_t*)0xfffff000;
+
+    size_t page_dir_i = virt_page / 4096 / 1024;
+    size_t page_tab_i = virt_page / 4096 % 1024;
+
+    uint32_t* page_table = (uint32_t*)(0xffc00000 + page_dir_i * 4096);
+
+    uint32_t pd_entry = current_page_directory[page_dir_i];
+    if(!(pd_entry & PE_PRESENT)) {
+        current_page_directory[page_dir_i] = page_alloc() | (flags & PE_FLAG_MASK);
+        invlpg((virt_t)page_table);
+    }
+
+    page_table[page_tab_i] = (phys_page & PE_ADDR_MASK) | (flags & PE_FLAG_MASK);
+    invlpg((virt_t)virt_page);
+}

@@ -38,4 +38,7 @@ page_alloc();
 void
 page_free(phys_t addr);
 
+void
+page_map(virt_t virt_page, phys_t phys_page, int flags);
+
 #endif

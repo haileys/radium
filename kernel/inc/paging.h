@@ -34,4 +34,7 @@ page_free(phys_t addr);
 void
 page_map(virt_t virt_page, phys_t phys_page, page_flags_t flags);
 
+void
+page_unmap(virt_t virt_page);
+
 #endif

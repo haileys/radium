@@ -107,3 +107,9 @@ page_map(virt_t virt_page, phys_t phys_page, page_flags_t flags)
     page_table[page_tab_i] = (phys_page & PE_ADDR_MASK) | (flags & PE_FLAG_MASK);
     invlpg((virt_t)virt_page);
 }
+
+void
+page_unmap(virt_t virt_page)
+{
+    page_map(virt_page, 0, 0);
+}

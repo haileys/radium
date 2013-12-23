@@ -9,6 +9,7 @@ OBJECTS = \
 	src/gdt_helper.o \
 	src/idt.o \
 	src/isrs.o \
+	src/kernel_page.o \
 	src/loader.o \
 	src/main.o \
 	src/paging.o \

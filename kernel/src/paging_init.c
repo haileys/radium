@@ -1,4 +1,5 @@
 #include "console.h"
+#include "kernel_page.h"
 #include "multiboot.h"
 #include "paging.h"
 #include "string.h"
@@ -76,7 +77,7 @@ void
 paging_set_allocatable_start(phys_t addr)
 {
     if(addr > kernel_end) {
-        kernel_end = addr;
+        kernel_end = (addr + PAGE_SIZE - 1) & ~(PAGE_SIZE - 1);
     }
 }
 
@@ -96,4 +97,6 @@ paging_init(multiboot_info_t* mb)
     recursively_map_page_directory(page_directory);
 
     set_page_directory((phys_t)page_directory);
+
+    kernel_page_init(kernel_end, 0x10000000);
 }

@@ -25,7 +25,7 @@ radium.bin: linker.ld $(OBJECTS) script/embed_symbol_table.rb
 	@ld -o $@ -T linker.ld $(OBJECTS)
 	ruby script/embed_symbol_table.rb
 
-%.o: %.c
+%.o: %.c inc/*.h
 	@echo cc $@
 	@gcc -o $@ $(CFLAGS) -c $<
 

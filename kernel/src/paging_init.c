@@ -3,6 +3,7 @@
 #include "multiboot.h"
 #include "paging.h"
 #include "string.h"
+#include "util.h"
 
 static phys_t
 kernel_end;
@@ -77,7 +78,7 @@ void
 paging_set_allocatable_start(phys_t addr)
 {
     if(addr > kernel_end) {
-        kernel_end = (addr + PAGE_SIZE - 1) & ~(PAGE_SIZE - 1);
+        kernel_end = round_up(addr, PAGE_SIZE);
     }
 }
 

@@ -17,6 +17,7 @@ OBJECTS = \
 	src/panic.o \
 	src/panic_helper.o \
 	src/string.o \
+	src/task.o \
 
 .PHONY: clean
 

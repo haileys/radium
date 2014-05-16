@@ -1,4 +1,5 @@
 #include "gdt.h"
+#include "panic.h"
 #include "types.h"
 
 typedef struct {
@@ -12,7 +13,7 @@ typedef struct {
 gdt_entry_t;
 
 static gdt_entry_t
-gdt[5];
+gdt[6];
 
 volatile struct {
     uint16_t size;
@@ -20,10 +21,22 @@ volatile struct {
 } __attribute__((packed))
 gdtr;
 
-static void
+void
 gdt_set_entry(gdt_selector_t sel, uint32_t base, uint32_t limit, gdt_privilege_t priv, gdt_type_t type)
 {
-    limit /= 4096;
+    if(sel >= sizeof(gdt)) {
+        panic("GDT overflow");
+    }
+
+    uint8_t flags = 1 << 6; // 32 bit segment
+
+    // 1 MiB is the maximum segment size that can be expressed with 1 byte
+    // granularity. If we need to express a size bigger than this, we need
+    // to divide the size by 4 KiB and use 4 KiB granularity.
+    if(limit >= (1 << 20)) {
+        limit /= 4096;
+        flags |= 1 << 7; // 4 KiB granularity
+    }
 
     gdt_entry_t ent;
     ent.limit_0_15 = limit & 0xffff;
@@ -35,10 +48,7 @@ gdt_set_entry(gdt_selector_t sel, uint32_t base, uint32_t limit, gdt_privilege_t
                | ((type & 1) << 3) // code/data
                | (1 << 1)          // data segments are always writable, code segments are always readable
                ;
-    ent.limit_16_19_and_flags = ((limit >> 16) & 0x0f)
-                              | (1 << 7) // 4 KiB granularity
-                              | (1 << 6) // 32 bit segment;
-                              ;
+    ent.limit_16_19_and_flags = ((limit >> 16) & 0x0f) | flags;
     ent.base_24_31 = (base >> 24) & 0xff;
 
     gdt[sel / sizeof(gdt_entry_t)] = ent;

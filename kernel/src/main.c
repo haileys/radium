@@ -1,10 +1,12 @@
 #include "console.h"
 #include "gdt.h"
 #include "idt.h"
+#include "kernel_page.h"
 #include "multiboot.h"
 #include "paging.h"
 #include "panic.h"
 #include "string.h"
+#include "task.h"
 #include "types.h"
 
 static multiboot_info_t* mb;
@@ -43,15 +45,16 @@ kmain(multiboot_info_t* mb_, uint32_t magic)
     gdt_init();
     idt_init();
     paging_init(mb);
+    task_init();
 
     printf("Booted.\n");
 
     interrupts_enable();
 
+    printf("sizeof(tss_t) == %d\n", sizeof(tss_t));
+
     multiboot_module_t* mod = find_module("/init.bin");
     page_map(0x10000000, mod->mod_start, PE_PRESENT | PE_USER);
-
-    printf("--> %x\n", *(uint32_t*)0x10000000);
 
     while(1) {
         __asm__ volatile("hlt");

@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+#define static_assert(name, expr) static char __static_assert__##name[(expr) ? 1 : -1] __attribute__((unused))
+
 static inline size_t
 round_down(size_t val, size_t divisor)
 {

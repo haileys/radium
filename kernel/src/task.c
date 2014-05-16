@@ -1,6 +1,9 @@
 #include "console.h"
 #include "gdt.h"
 #include "task.h"
+#include "util.h"
+
+static_assert(tss_t_is_0x68_bytes_long, sizeof(tss_t) == 0x68);
 
 static tss_t
 tss;

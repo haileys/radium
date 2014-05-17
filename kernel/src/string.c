@@ -37,6 +37,15 @@ memset16(void* ptr_, uint16_t w, size_t n)
     }
 }
 
+void
+memset32(void* ptr_, uint32_t l, size_t n)
+{
+    uint32_t* ptr = ptr_;
+    while(n--) {
+        *ptr++ = l;
+    }
+}
+
 bool
 streq(const char* a, const char* b)
 {
@@ -50,4 +59,18 @@ streq(const char* a, const char* b)
         a++;
         b++;
     }
+}
+
+void
+strlcpy(char* dest, const char* src, size_t dest_total_size)
+{
+    if(dest_total_size == 0) {
+        return;
+    }
+
+    while(*src && dest_total_size > 1) {
+        *dest++ = *src++;
+    }
+
+    *dest = 0;
 }

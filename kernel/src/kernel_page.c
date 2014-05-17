@@ -40,7 +40,7 @@ kernel_page_alloc()
     interrupts_enable();
 
     if(allocated_to >= end) {
-        panic("Out of kernel address space");
+        return NULL;
     }
 
     page_map((virt_t)allocated_to, page_alloc(), PE_PRESENT | PE_READ_WRITE);

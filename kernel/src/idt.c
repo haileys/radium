@@ -73,6 +73,7 @@ idt_init()
 {
     remap_irqs();
     idt_init_asm();
+    interrupts_set_callable_from_user_mode(255);
 
     idtr.size = sizeof(idt) - 1;
     idtr.offset = idt;

@@ -27,6 +27,7 @@ idt_init_asm:
     register_isr 13
     register_isr 14
     register_isr 32
+    register_isr 255
     ret
 
 ; general protection fault
@@ -54,5 +55,11 @@ isr_14:
 isr_32:
     pusha
     ack_irq
+    popa
+    iret
+
+; syscall interrupt
+isr_255:
+    pusha
     popa
     iret

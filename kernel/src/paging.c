@@ -92,8 +92,8 @@ page_map(virt_t virt_page, phys_t phys_page, page_flags_t flags)
     // page directories are always recursively mapped into themselves:
     uint32_t* current_page_directory = (uint32_t*)0xfffff000;
 
-    size_t page_dir_i = virt_page / 4096 / 1024;
-    size_t page_tab_i = virt_page / 4096 % 1024;
+    size_t page_dir_i = (virt_page / 4096) / 1024;
+    size_t page_tab_i = (virt_page / 4096) % 1024;
 
     uint32_t* page_table = (uint32_t*)(0xffc00000 + page_dir_i * 4096);
 
@@ -112,4 +112,28 @@ void
 page_unmap(virt_t virt_page)
 {
     page_map(virt_page, 0, 0);
+}
+
+phys_t
+virt_to_phys(virt_t virt)
+{
+    uint32_t* current_page_directory = (uint32_t*)0xfffff000;
+
+    size_t page_dir_i = (virt / 4096) / 1024;
+    size_t page_tab_i = (virt / 4096) % 1024;
+    size_t page_offset = virt % 4096;
+
+    if(!(current_page_directory[page_dir_i] & PE_PRESENT)) {
+        return 0;
+    }
+
+    uint32_t* page_table = (uint32_t*)(0xffc00000 + page_dir_i * 4096);
+
+    uint32_t page_tab_entry = page_table[page_tab_i];
+
+    if(!(page_tab_entry & PE_PRESENT)) {
+        return 0;
+    }
+
+    return (page_tab_entry & PE_ADDR_MASK) + page_offset;
 }

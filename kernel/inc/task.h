@@ -72,7 +72,30 @@ typedef struct {
 } __attribute__((packed))
 tss_t;
 
+typedef struct {
+    uint32_t eax;
+    uint32_t ecx;
+    uint32_t edx;
+    uint32_t ebx;
+    uint32_t esp;
+    uint32_t ebp;
+    uint32_t esi;
+    uint32_t edi;
+}
+registers_t;
+
+typedef struct {
+    registers_t regs;
+    phys_t kernel_stack;
+    phys_t page_directory;
+    char name[64];
+}
+task_t;
+
 void
 task_init();
+
+void
+task_new(task_t* task, const char* name);
 
 #endif

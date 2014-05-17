@@ -45,9 +45,14 @@ kmain(multiboot_info_t* mb_, uint32_t magic)
     gdt_init();
     idt_init();
     paging_init(mb);
+
     task_init();
 
     printf("Booted.\n");
+
+    task_t a, b;
+    task_new(&a, "a");
+    task_new(&b, "b");
 
     interrupts_enable();
 

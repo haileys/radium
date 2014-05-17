@@ -26,4 +26,13 @@ task_init()
 
     __asm__ volatile("ltr ax" :: "a"((uint16_t)GDT_TSS));
 }
+
+void
+task_new(task_t* task, const char* name)
+{
+    memset32(&task->regs, 0, sizeof(task->regs) / sizeof(uint32_t));
+
+    task->kernel_stack = page_alloc();
+
+    strlcpy(task->name, name, sizeof(task->name));
 }

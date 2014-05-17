@@ -12,7 +12,7 @@ static phys_t
 alloc_zeroed_page()
 {
     phys_t page = page_alloc();
-    memset((void*)page, 0, 4096);
+    memset32((void*)page, 0, 1024);
     return page;
 }
 

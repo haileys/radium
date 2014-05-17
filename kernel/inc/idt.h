@@ -10,4 +10,10 @@ interrupts_disable();
 void
 interrupts_enable();
 
+void
+critical_begin();
+
+void
+critical_end();
+
 #endif

@@ -41,11 +41,11 @@ invlpg(virt_t virt)
 phys_t
 page_alloc()
 {
+    critical_begin();
+
     phys_t page = next_free_page;
 
     if(paging_enabled()) {
-        interrupts_disable();
-
         uint32_t old_null_page = *temp_page_entry;
         *temp_page_entry = page | PE_PRESENT | PE_READ_WRITE;
         invlpg(0);
@@ -54,11 +54,11 @@ page_alloc()
 
         *temp_page_entry = old_null_page;
         invlpg(0);
-
-        interrupts_enable();
     } else {
         next_free_page = *(phys_t*)page;
     }
+
+    critical_end();
 
     return page;
 }
@@ -66,9 +66,9 @@ page_alloc()
 void
 page_free(phys_t addr)
 {
-    if(paging_enabled()) {
-        interrupts_disable();
+    critical_begin();
 
+    if(paging_enabled()) {
         uint32_t old_null_page = *temp_page_entry;
         *temp_page_entry = addr | PE_PRESENT | PE_READ_WRITE;
         invlpg(0);
@@ -77,13 +77,13 @@ page_free(phys_t addr)
 
         *temp_page_entry = old_null_page;
         invlpg(0);
-
-        interrupts_disable();
     } else {
         *(phys_t*)addr = next_free_page;
     }
 
     next_free_page = addr;
+
+    critical_end();
 }
 
 void

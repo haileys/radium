@@ -85,9 +85,11 @@ typedef struct {
 registers_t;
 
 typedef struct {
-    registers_t regs;
-    phys_t kernel_stack;
-    phys_t page_directory;
+    registers_t* regs;
+    void* kernel_stack;
+    // allocated within the kernel's identity-mapped region:
+    uint32_t* page_directory;
+    phys_t page_directory_phys;
     char name[64];
 }
 task_t;
@@ -97,5 +99,8 @@ task_init();
 
 void
 task_new(task_t* task, const char* name);
+
+void
+task_destroy(task_t* task);
 
 #endif

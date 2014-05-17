@@ -1,6 +1,8 @@
 #include "console.h"
 #include "gdt.h"
+#include "kernel_page.h"
 #include "paging.h"
+#include "panic.h"
 #include "string.h"
 #include "task.h"
 #include "util.h"
@@ -32,7 +34,36 @@ task_new(task_t* task, const char* name)
 {
     memset32(&task->regs, 0, sizeof(task->regs) / sizeof(uint32_t));
 
-    task->kernel_stack = page_alloc();
-
     strlcpy(task->name, name, sizeof(task->name));
+
+    // initialise task page directory
+    uint32_t* current_page_directory = (uint32_t*)CURRENT_PAGE_DIRECTORY;
+    uint32_t* task_page_directory = kernel_page_alloc_zeroed();
+
+    if(!task_page_directory) {
+        panic("could not allocate page for new task's page directory");
+    }
+
+    for(size_t i = 0; i < KERNEL_STACK_BEGIN / (4*1024*1024); i++) {
+        task_page_directory[i] = current_page_directory[i];
+    }
+
+    task->page_directory = task_page_directory;
+    task->page_directory_phys = virt_to_phys((virt_t)task_page_directory);
+
+    // initialize kernel stack page table for new task
+    uint32_t* kernel_stack_page_table = kernel_page_alloc_zeroed();
+    task->page_directory[KERNEL_STACK_BEGIN / (4*1024*1024)] = (uint32_t)kernel_stack_page_table | PE_PRESENT | PE_READ_WRITE;
+
+    task->kernel_stack = kernel_page_alloc_zeroed();
+    kernel_stack_page_table[1023] = (uint32_t)task->kernel_stack | PE_PRESENT | PE_READ_WRITE;
+}
+
+void
+task_destroy(task_t* task)
+{
+    kernel_page_free(task->kernel_stack);
+    kernel_page_free((void*)(task->page_directory[KERNEL_STACK_BEGIN / (4*1024*1024)] & PE_ADDR_MASK));
+    kernel_page_free(task->page_directory);
+    memset(task, 0, sizeof(*task));
 }

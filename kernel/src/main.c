@@ -5,6 +5,7 @@
 #include "multiboot.h"
 #include "paging.h"
 #include "panic.h"
+#include "sched.h"
 #include "string.h"
 #include "task.h"
 #include "types.h"
@@ -50,9 +51,8 @@ kmain(multiboot_info_t* mb_, uint32_t magic)
 
     printf("Booted.\n");
 
-    task_t a, b;
-    task_new(&a, "a");
-    task_new(&b, "b");
+    task_t task;
+    task_new(&task, "a");
 
     interrupts_enable();
 
@@ -62,6 +62,8 @@ kmain(multiboot_info_t* mb_, uint32_t magic)
     page_map(USER_BEGIN, mod->mod_start, PE_PRESENT | PE_USER);
 
     printf("first char: %d\n", (int)*(uint8_t*)USER_BEGIN);
+
+    sched_begin_multitasking(&task);
 
     while(1) {
         __asm__ volatile("hlt");

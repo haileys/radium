@@ -11,6 +11,7 @@
 
 #define KERNEL_STACK_GUARD_BEGIN 0x0fffe000ul
 #define KERNEL_STACK_BEGIN       0x0ffff000ul
+#define KERNEL_STACK_END         0x0ffffffcul
 #define USER_BEGIN               0x10000000ul
 
 typedef enum {

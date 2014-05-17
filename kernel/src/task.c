@@ -24,7 +24,7 @@ task_init()
     // pointer to the IO permission bitmap is beyond the end of the segment
     tss.iopb = sizeof(tss);
 
-    __asm__ volatile("ltr ax" :: "a"((uint16_t)GDT_TSS));
+    __asm__ volatile("ltr ax" :: "a"((uint16_t)GDT_TSS | 3));
 }
 
 void

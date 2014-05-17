@@ -9,6 +9,10 @@
 #define PE_FLAG_MASK  (PAGE_SIZE - 1)
 #define PE_ADDR_MASK  (~PE_FLAG_MASK)
 
+#define KERNEL_STACK_GUARD_BEGIN 0x0fffe000ul
+#define KERNEL_STACK_BEGIN       0x0ffff000ul
+#define USER_BEGIN               0x10000000ul
+
 typedef enum {
     PE_PRESENT    = 1 << 0,
     PE_READ_WRITE = 1 << 1,

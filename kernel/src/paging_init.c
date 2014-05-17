@@ -99,5 +99,5 @@ paging_init(multiboot_info_t* mb)
 
     set_page_directory((phys_t)page_directory);
 
-    kernel_page_init(kernel_end, 0x10000000);
+    kernel_page_init(kernel_end, KERNEL_STACK_GUARD_BEGIN);
 }

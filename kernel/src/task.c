@@ -15,7 +15,7 @@ task_init()
 {
     printf("setting up TSS at 0x%x\n", &tss);
 
-    gdt_set_entry(GDT_TSS, (uint32_t)&tss, sizeof(tss), GDT_KERNEL, GDT_CODE);
+    gdt_set_tss(GDT_TSS, (uint32_t)&tss, sizeof(tss));
     gdt_reload();
 
     tss.ss0 = GDT_KERNEL_DATA;
@@ -24,6 +24,6 @@ task_init()
     // pointer to the IO permission bitmap is beyond the end of the segment
     tss.iopb = sizeof(tss);
 
-    // __asm__ volatile("ltr ax" :: "a"((uint16_t)GDT_TSS));
+    __asm__ volatile("ltr ax" :: "a"((uint16_t)GDT_TSS));
 }
 }

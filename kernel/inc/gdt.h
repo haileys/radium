@@ -28,6 +28,9 @@ void
 gdt_set_entry(gdt_selector_t sel, uint32_t base, uint32_t limit, gdt_privilege_t priv, gdt_type_t type);
 
 void
+gdt_set_tss(gdt_selector_t sel, uint32_t base, uint32_t limit);
+
+void
 gdt_reload();
 
 void

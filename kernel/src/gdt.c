@@ -21,8 +21,8 @@ volatile struct {
 } __attribute__((packed))
 gdtr;
 
-void
-gdt_set_entry(gdt_selector_t sel, uint32_t base, uint32_t limit, gdt_privilege_t priv, gdt_type_t type)
+static void
+gdt_set_entry_raw(gdt_selector_t sel, uint32_t base, uint32_t limit, uint8_t access)
 {
     if(sel >= sizeof(gdt)) {
         panic("GDT overflow");
@@ -42,16 +42,29 @@ gdt_set_entry(gdt_selector_t sel, uint32_t base, uint32_t limit, gdt_privilege_t
     ent.limit_0_15 = limit & 0xffff;
     ent.base_0_15 = base & 0xffff;
     ent.base_16_23 = (base >> 16) & 0xff;
-    ent.access = (1 << 7)          // present
-               | ((priv & 3) << 5) // privilege
-               | (1 << 4)          // dunno lol
-               | ((type & 1) << 3) // code/data
-               | (1 << 1)          // data segments are always writable, code segments are always readable
-               ;
+    ent.access = access;
     ent.limit_16_19_and_flags = ((limit >> 16) & 0x0f) | flags;
     ent.base_24_31 = (base >> 24) & 0xff;
 
     gdt[sel / sizeof(gdt_entry_t)] = ent;
+}
+
+void
+gdt_set_entry(gdt_selector_t sel, uint32_t base, uint32_t limit, gdt_privilege_t priv, gdt_type_t type)
+{
+    gdt_set_entry_raw(sel, base, limit,
+        (1 << 7)          | // present
+        ((priv & 3) << 5) | // privilege
+        (1 << 4)          | // dunno lol
+        ((type & 1) << 3) | // code/data
+        (1 << 1)            // data segments are always writable, code segments are always readable
+    );
+}
+
+void
+gdt_set_tss(gdt_selector_t sel, uint32_t base, uint32_t limit)
+{
+    gdt_set_entry_raw(sel, base, limit, 0x89);
 }
 
 void

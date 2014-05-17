@@ -2,6 +2,7 @@
 #include "kernel_page.h"
 #include "paging.h"
 #include "panic.h"
+#include "string.h"
 
 typedef union kernel_page {
     union kernel_page* next;
@@ -46,6 +47,14 @@ kernel_page_alloc()
 
     critical_end();
     return retn;
+}
+
+void*
+kernel_page_alloc_zeroed()
+{
+    void* page = kernel_page_alloc();
+    memset32(page, 0, 1024);
+    return page;
 }
 
 void

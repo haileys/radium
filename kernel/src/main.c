@@ -54,7 +54,9 @@ kmain(multiboot_info_t* mb_, uint32_t magic)
     printf("sizeof(tss_t) == %d\n", sizeof(tss_t));
 
     multiboot_module_t* mod = find_module("/init.bin");
-    page_map(0x10000000, mod->mod_start, PE_PRESENT | PE_USER);
+    page_map(USER_BEGIN, mod->mod_start, PE_PRESENT | PE_USER);
+
+    printf("first char: %d\n", (int)*(uint8_t*)USER_BEGIN);
 
     while(1) {
         __asm__ volatile("hlt");

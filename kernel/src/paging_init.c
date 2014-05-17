@@ -52,6 +52,14 @@ register_available_memory(multiboot_info_t* mb)
 }
 
 static void
+create_page_tables_for_kernel_space(uint32_t* page_directory)
+{
+    for(size_t i = 0; i < KERNEL_STACK_END / (4 * 1024 * 1024); i++) {
+        page_directory[i] = alloc_zeroed_page() | PE_PRESENT | PE_READ_WRITE;
+    }
+}
+
+static void
 identity_map_kernel(uint32_t* page_directory)
 {
     // we start looping from PAGE_SIZE in order to leave the null page unmapped
@@ -94,6 +102,7 @@ paging_init(multiboot_info_t* mb)
 
     uint32_t* page_directory = (uint32_t*)alloc_zeroed_page();
 
+    create_page_tables_for_kernel_space(page_directory);
     identity_map_kernel(page_directory);
     recursively_map_page_directory(page_directory);
 

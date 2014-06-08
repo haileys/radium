@@ -46,24 +46,26 @@ kmain(multiboot_info_t* mb_, uint32_t magic)
     gdt_init();
     idt_init();
     paging_init(mb);
-
     task_init();
 
-    printf("Booted.\n");
-
-    task_t task;
-    task_new(&task, "a");
-
-    interrupts_enable();
-
-    printf("sizeof(tss_t) == %d\n", sizeof(tss_t));
+    task_t init_task;
+    task_new(&init_task, "init");
 
     multiboot_module_t* mod = find_module("/init.bin");
-    page_map(USER_BEGIN, mod->mod_start, PE_PRESENT | PE_USER);
 
-    printf("first char: %d\n", (int)*(uint8_t*)USER_BEGIN);
+    set_page_directory(init_task.page_directory_phys);
 
-    sched_begin_multitasking(&task);
+    for(size_t i = 0; i < mod->mod_end - mod->mod_start; i += PAGE_SIZE) {
+        phys_t page = page_alloc();
+        page_map(USER_BEGIN + i, page, PE_PRESENT | PE_USER);
+        size_t size = mod->mod_end - i;
+        if(size > PAGE_SIZE) {
+            size = PAGE_SIZE;
+        }
+        memcpy((void*)(USER_BEGIN + i), (void*)(mod->mod_start + i), size);
+    }
+
+    sched_begin_multitasking();
 
     while(1) {
         __asm__ volatile("hlt");

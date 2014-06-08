@@ -50,13 +50,14 @@ task_new(task_t* task, const char* name)
 
     task->page_directory = task_page_directory;
     task->page_directory_phys = virt_to_phys((virt_t)task_page_directory);
+    task->page_directory[1023] = task->page_directory_phys | PE_PRESENT | PE_READ_WRITE;
 
     // initialize kernel stack page table for new task
     uint32_t* kernel_stack_page_table = kernel_page_alloc_zeroed();
-    task->page_directory[KERNEL_STACK_BEGIN / (4*1024*1024)] = (uint32_t)kernel_stack_page_table | PE_PRESENT | PE_READ_WRITE;
+    task->page_directory[KERNEL_STACK_BEGIN / (4*1024*1024)] = virt_to_phys((virt_t)kernel_stack_page_table) | PE_PRESENT | PE_READ_WRITE;
 
     task->kernel_stack = kernel_page_alloc_zeroed();
-    kernel_stack_page_table[1023] = (uint32_t)task->kernel_stack | PE_PRESENT | PE_READ_WRITE;
+    kernel_stack_page_table[1023] = virt_to_phys((virt_t)task->kernel_stack) | PE_PRESENT | PE_READ_WRITE;
 }
 
 void

@@ -1,9 +1,11 @@
-global sched_begin_multitasking_iret
+use32
+
+global sched_begin_multitasking
 
 %define USER_CODE (0x18 | 3)
 %define USER_DATA (0x20 | 3)
 
-sched_begin_multitasking_iret:
+sched_begin_multitasking:
     push dword USER_DATA  ; ss
     push dword 0          ; esp
     pushf                 ; eflags

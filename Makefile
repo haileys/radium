@@ -1,4 +1,4 @@
-.PHONY: clean kernel/radium.bin
+.PHONY: clean kernel/radium.bin user/init.bin
 
 ifeq ($(shell uname),Darwin)
 $(error Cowardly refusing to run on Mac OS X)

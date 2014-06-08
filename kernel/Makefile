@@ -17,7 +17,6 @@ OBJECTS = \
 	src/panic.o \
 	src/panic_helper.o \
 	src/sched.o \
-	src/sched_helper.o \
 	src/string.o \
 	src/task.o \
 

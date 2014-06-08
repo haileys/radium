@@ -18,6 +18,7 @@ OBJECTS = \
 	src/panic_helper.o \
 	src/sched.o \
 	src/string.o \
+	src/syscall_entry.o \
 	src/task.o \
 
 .PHONY: clean

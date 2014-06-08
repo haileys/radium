@@ -7,6 +7,7 @@
 #include "panic.h"
 #include "sched.h"
 #include "string.h"
+#include "syscall.h"
 #include "task.h"
 #include "types.h"
 
@@ -47,6 +48,7 @@ kmain(multiboot_info_t* mb_, uint32_t magic)
     idt_init();
     paging_init(mb);
     task_init();
+    syscall_init();
 
     task_t init_task;
     task_new(&init_task, "init");

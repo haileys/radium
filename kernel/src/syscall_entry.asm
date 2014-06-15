@@ -37,6 +37,9 @@ syscall_entry:
     add esp, 4
 
     popa
+
+    ; STI apparently waits one instruction before enabling interrupts, so
+    ; despite how it appears, this return sequence should be race-free.
     sti
     sysexit
 

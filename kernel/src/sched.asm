@@ -25,23 +25,26 @@ sched_begin:
     sti
     sysexit
 
+sched_next:
+    mov eax, [current_task]
+    ret
+
 sched_switch:
     ; save old task state
     pusha
-    mov ebx, [current_task]
-    fxsave task_fpu_state(ebx)
-    mov task_esp(ebx), esp
-    mov task_eip(ebx), dword .return
+    mov eax, [current_task]
+    fxsave task_fpu_state(eax)
+    mov task_esp(eax), esp
+    mov task_eip(eax), dword .return
 
-    ; find new task
-    ; TODO
+    call sched_next
 
-    mov eax, task_page_dir_phys(ebx)
-    mov cr3, eax
+    mov ebx, task_page_dir_phys(eax)
+    mov cr3, ebx
 
-    fxrstor task_fpu_state(ebx)
-    mov esp, task_esp(ebx)
-    jmp task_eip(ebx)
+    fxrstor task_fpu_state(eax)
+    mov esp, task_esp(eax)
+    jmp task_eip(eax)
 .return:
     popa
     ret

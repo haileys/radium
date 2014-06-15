@@ -7,7 +7,8 @@ section .crt0
 
 start:
     call main
-    jmp $
+    push eax
+    call exit
 
 regdump:
     push ecx
@@ -20,3 +21,9 @@ regdump:
     pop edx
     pop ecx
     ret
+
+exit:
+    mov eax, 1     ; syscall number 1
+    mov ebx, [esp+4] ; pass exit code in EBX
+    ; don't bother setting ECX and EDX because this syscall never returns
+    sysenter

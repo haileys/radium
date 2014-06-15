@@ -5,5 +5,5 @@ int
 main()
 {
     regdump();
-    while(1);
+    return 123;
 }

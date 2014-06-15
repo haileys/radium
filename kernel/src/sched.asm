@@ -1,9 +1,17 @@
 use32
 
 global sched_begin
+global sched_switch
+
+extern current_task
 
 %define USER_CODE (0x18 | 3)
 %define USER_DATA (0x20 | 3)
+
+%define task_fpu_state(task)     [(task) + 0]
+%define task_esp(task)           [(task) + 512]
+%define task_eip(task)           [(task) + 516]
+%define task_page_dir_phys(task) [(task) + 528]
 
 sched_begin:
     mov ax, USER_DATA
@@ -16,3 +24,24 @@ sched_begin:
     mov edx, 0x10000000 ; task entry point
     sti
     sysexit
+
+sched_switch:
+    ; save old task state
+    pusha
+    mov ebx, [current_task]
+    fxsave task_fpu_state(ebx)
+    mov task_esp(ebx), esp
+    mov task_eip(ebx), dword .return
+
+    ; find new task
+    ; TODO
+
+    mov eax, task_page_dir_phys(ebx)
+    mov cr3, eax
+
+    fxrstor task_fpu_state(ebx)
+    mov esp, task_esp(ebx)
+    jmp task_eip(ebx)
+.return:
+    popa
+    ret

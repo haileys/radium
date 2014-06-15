@@ -73,12 +73,19 @@ typedef struct {
 tss_t;
 
 typedef struct {
-    void* kernel_stack;
-    // allocated within the kernel's identity-mapped region:
-    uint32_t* page_directory;
-    phys_t page_directory_phys;
+    /*   0 */ uint8_t fpu_state[512];
+    /* 512 */ uint32_t esp;
+    /* 516 */ uint32_t eip;
+    /* 520 */ void* kernel_stack;
+              // allocated within the kernel's identity-mapped region:
+    /* 524 */ uint32_t* page_directory;
+    /* 528 */ phys_t page_directory_phys;
+    /* 532 */
 }
 task_t;
+
+extern task_t*
+current_task;
 
 void
 task_init();

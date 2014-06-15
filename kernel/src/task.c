@@ -8,12 +8,16 @@
 #include "util.h"
 
 static_assert(tss_t_is_0x68_bytes_long, sizeof(tss_t) == 0x68);
+static_assert(task_t_is_544_bytes_long, sizeof(task_t) == 532);
 
 static tss_t
 tss;
 
 static task_t
 init_task;
+
+task_t*
+current_task;
 
 void
 task_init()
@@ -56,6 +60,8 @@ task_init()
     uint32_t* user_stack_page_table = kernel_page_alloc_zeroed();
     init_task.page_directory[1022] = virt_to_phys((virt_t)user_stack_page_table) | PE_PRESENT | PE_READ_WRITE | PE_USER;
     user_stack_page_table[1023] = page_alloc() | PE_PRESENT | PE_READ_WRITE | PE_USER;
+
+    current_task = &init_task;
 }
 
 void

@@ -4,7 +4,7 @@ extern interrupts_register_isr
 extern idtr
 extern console_puts
 extern panic
-extern printf
+extern sched_switch
 
 %macro register_isr 1
     push isr_%1
@@ -71,14 +71,12 @@ end_isr 14
 
 ; PIT irq
 begin_isr 32
-    pusha
-    push .msg
-    call printf
-    add esp, 4
+    push eax
     ack_irq
-    popa
+    pop eax
+
+    call sched_switch
     iret
-    .msg db ".", 0
 end_isr 32
 
 ; keyboard irq

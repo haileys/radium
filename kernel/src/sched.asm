@@ -12,7 +12,7 @@ sched_begin_multitasking:
     mov fs, ax
     mov gs, ax
 
-    xor ecx, ecx        ; let userland set up its own stack
+    mov ecx, 0xffc00000 ; userland stack end
     mov edx, 0x10000000 ; task entry point
     sti
     sysexit

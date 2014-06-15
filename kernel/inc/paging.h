@@ -12,6 +12,7 @@
 #define KERNEL_STACK_BEGIN       0x0fc00000ul
 #define KERNEL_STACK_END         0x0ffffffcul
 #define USER_BEGIN               0x10000000ul
+#define USER_STACK_END           0xffc00000ul
 #define CURRENT_PAGE_DIRECTORY   0xfffff000ul
 
 typedef enum {

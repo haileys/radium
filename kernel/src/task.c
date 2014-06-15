@@ -54,6 +54,11 @@ task_new(task_t* task, const char* name)
 
     task->kernel_stack = kernel_page_alloc_zeroed();
     kernel_stack_page_table[1023] = virt_to_phys((virt_t)task->kernel_stack) | PE_PRESENT | PE_READ_WRITE;
+
+    // user stack
+    uint32_t* user_stack_page_table = kernel_page_alloc_zeroed();
+    task->page_directory[1022] = virt_to_phys((virt_t)user_stack_page_table) | PE_PRESENT | PE_READ_WRITE | PE_USER;
+    user_stack_page_table[1023] = page_alloc() | PE_PRESENT | PE_READ_WRITE | PE_USER;
 }
 
 void

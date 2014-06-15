@@ -9,6 +9,9 @@ regdump();
 void
 exit(int status);
 
+void
+yield();
+
 int
 main();
 

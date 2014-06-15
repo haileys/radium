@@ -1,6 +1,7 @@
 #include <radium.h>
 
 #include "console.h"
+#include "sched.h"
 #include "syscall.h"
 #include "task.h"
 #include "util.h"
@@ -24,12 +25,21 @@ syscall_exit(registers_t* regs)
     return 0;
 }
 
+static uint32_t
+syscall_yield(registers_t* regs)
+{
+    (void)regs;
+    sched_switch();
+    return 0;
+}
+
 typedef uint32_t(syscall_t)(registers_t*);
 
 static syscall_t*
 syscall_table[] = {
     [SYS_REGDUMP] = syscall_regdump,
     [SYS_EXIT]    = syscall_exit,
+    [SYS_YIELD]   = syscall_yield,
 };
 
 void

@@ -1,6 +1,9 @@
 use32
 
 global regdump
+global exit
+global yield
+
 extern main
 
 section .crt0
@@ -27,3 +30,15 @@ exit:
     mov ebx, [esp+4] ; pass exit code in EBX
     ; don't bother setting ECX and EDX because this syscall never returns
     sysenter
+
+yield:
+    push ecx
+    push edx
+    mov ecx, esp
+    mov edx, .ret
+    mov eax, 2 ; syscall number 0
+    sysenter
+.ret:
+    pop edx
+    pop ecx
+    ret

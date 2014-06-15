@@ -4,4 +4,7 @@
 void
 sched_begin();
 
+void
+sched_switch();
+
 #endif

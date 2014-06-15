@@ -36,8 +36,6 @@ interrupts_register_isr(uint8_t interrupt_no, uint32_t handler)
     ent.offset_16_31 = (handler >> 16) & 0xffff;
 
     idt[interrupt_no] = ent;
-
-    printf("Interrupt no. #%d points to 0x%x\n", interrupt_no, handler);
 }
 
 static void

@@ -95,7 +95,6 @@ paging_init(multiboot_info_t* mb)
 {
     extern int end_of_image;
     paging_set_allocatable_start((phys_t)&end_of_image);
-    printf("kernel_end = 0x%x\n", kernel_end);
 
     size_t pages_registered = register_available_memory(mb);
     printf("%d MiB available useful memory.\n", pages_registered * PAGE_SIZE / 1024 / 1024);

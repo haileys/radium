@@ -15,8 +15,6 @@ tss;
 void
 task_init()
 {
-    printf("setting up TSS at 0x%x\n", &tss);
-
     gdt_set_tss(GDT_TSS, (uint32_t)&tss, sizeof(tss));
     gdt_reload();
 

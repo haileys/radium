@@ -3,7 +3,7 @@
 
 typedef unsigned int uint32_t;
 
-unsigned int
+void
 regdump();
 
 int

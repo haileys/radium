@@ -78,9 +78,13 @@ end_isr 14
 ; PIT irq
 begin_isr 32
     pusha
+    push .msg
+    call printf
+    add esp, 4
     ack_irq
     popa
     iret
+    .msg db ".", 0
 end_isr 32
 
 ; keyboard irq

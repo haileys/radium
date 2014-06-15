@@ -28,10 +28,8 @@ task_init()
 }
 
 void
-task_new(task_t* task, const char* name)
+task_new(task_t* task)
 {
-    strlcpy(task->name, name, sizeof(task->name));
-
     // initialise task page directory
     uint32_t* current_page_directory = (uint32_t*)CURRENT_PAGE_DIRECTORY;
     uint32_t* task_page_directory = kernel_page_alloc_zeroed();

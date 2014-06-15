@@ -51,7 +51,7 @@ kmain(multiboot_info_t* mb_, uint32_t magic)
     syscall_init();
 
     task_t init_task;
-    task_new(&init_task, "init");
+    task_new(&init_task);
 
     multiboot_module_t* mod = find_module("/init.bin");
 

@@ -77,7 +77,6 @@ typedef struct {
     // allocated within the kernel's identity-mapped region:
     uint32_t* page_directory;
     phys_t page_directory_phys;
-    char name[64];
 }
 task_t;
 
@@ -85,7 +84,7 @@ void
 task_init();
 
 void
-task_new(task_t* task, const char* name);
+task_new(task_t* task);
 
 void
 task_destroy(task_t* task);

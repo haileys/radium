@@ -1,7 +1,8 @@
 CFLAGS = \
 	-Wall -Wextra -pedantic -Werror -nostdlib -nostdinc -fno-builtin \
 	-nostartfiles -nodefaultlibs -fno-exceptions -ffreestanding \
-	-fno-stack-protector -fno-pic -std=c99 -m32 -iquote inc -masm=intel
+	-fno-stack-protector -fno-pic -std=c99 -m32 -iquote inc -masm=intel \
+	-I ../api
 
 OBJECTS = \
 	src/console.o \

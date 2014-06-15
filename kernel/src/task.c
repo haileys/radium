@@ -8,7 +8,7 @@
 #include "util.h"
 
 static_assert(tss_t_is_0x68_bytes_long, sizeof(tss_t) == 0x68);
-static_assert(task_t_is_544_bytes_long, sizeof(task_t) == 532);
+static_assert(task_t_is_544_bytes_long, sizeof(task_t) == 536);
 
 static tss_t
 tss;

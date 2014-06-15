@@ -2,6 +2,7 @@
 #define TASK_H
 
 #include "types.h"
+#include "syscall.h"
 
 typedef struct {
     // 0x00
@@ -72,6 +73,8 @@ typedef struct {
 } __attribute__((packed))
 tss_t;
 
+// sched.asm refers to hardcoded offsets within this struct.
+// make sure to change it when changing anything here.
 typedef struct {
     /*   0 */ uint8_t fpu_state[512];
     /* 512 */ uint32_t esp;
@@ -80,7 +83,8 @@ typedef struct {
               // allocated within the kernel's identity-mapped region:
     /* 524 */ uint32_t* page_directory;
     /* 528 */ phys_t page_directory_phys;
-    /* 532 */
+    /* 532 */ registers_t* syscall_registers;
+    /* 536 */
 }
 task_t;
 

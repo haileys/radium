@@ -2,6 +2,7 @@
 
 #include "console.h"
 #include "syscall.h"
+#include "task.h"
 #include "util.h"
 
 static uint32_t
@@ -46,5 +47,9 @@ syscall_dispatch(registers_t* regs)
         return;
     }
 
+    current_task->syscall_registers = regs;
+
     regs->eax = func(regs);
+
+    current_task->syscall_registers = NULL;
 }

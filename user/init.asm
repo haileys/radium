@@ -3,6 +3,7 @@ org 0x10000000
 
 start:
     mov edx, .syscall_return_address
+    mov eax, 0xdeadbeef
     sysenter
 .syscall_return_address:
     ; burn some time the hacky way:

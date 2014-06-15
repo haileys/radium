@@ -1,6 +1,6 @@
 use32
 
-extern printf
+extern syscall_dispatch
 
 global syscall_entry
 global syscall_init
@@ -32,8 +32,8 @@ syscall_init:
 syscall_entry:
     pusha
 
-    push .msg
-    call printf
+    push esp
+    call syscall_dispatch
     add esp, 4
 
     popa
@@ -42,5 +42,3 @@ syscall_entry:
     ; despite how it appears, this return sequence should be race-free.
     sti
     sysexit
-
-    .msg db "syscall!", 10, 0

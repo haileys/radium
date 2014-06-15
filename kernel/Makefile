@@ -19,6 +19,7 @@ OBJECTS = \
 	src/pit.o \
 	src/sched.o \
 	src/string.o \
+	src/syscall.o \
 	src/syscall_entry.o \
 	src/task.o \
 

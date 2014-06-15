@@ -32,8 +32,6 @@ task_init()
 void
 task_new(task_t* task, const char* name)
 {
-    memset32(&task->regs, 0, sizeof(task->regs) / sizeof(uint32_t));
-
     strlcpy(task->name, name, sizeof(task->name));
 
     // initialise task page directory

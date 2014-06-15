@@ -34,6 +34,8 @@ kmain(multiboot_info_t* mb_, uint32_t magic)
     (void)magic;
     mb = mb_;
 
+    critical_begin();
+
     console_init();
 
     printf("Radium booting from %s.\n", (const char*)mb->boot_loader_name);
@@ -54,6 +56,7 @@ kmain(multiboot_info_t* mb_, uint32_t magic)
 
     task_init_load_text((const char*)mod->mod_start, mod->mod_end - mod->mod_start);
 
+    critical_reset();
     sched_begin();
 
     while(1) {

@@ -100,3 +100,9 @@ critical_end()
         interrupts_enable();
     }
 }
+
+void
+critical_reset()
+{
+    critical_nesting = 0;
+}

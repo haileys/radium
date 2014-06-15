@@ -16,4 +16,7 @@ critical_begin();
 void
 critical_end();
 
+void
+critical_reset();
+
 #endif

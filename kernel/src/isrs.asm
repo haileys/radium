@@ -83,4 +83,10 @@ begin_isr 32
     iret
 end_isr 32
 
+; keyboard irq
+begin_isr 33
+    ack_irq
+    iret
+end_isr 33
+
 ret

@@ -84,7 +84,7 @@ void
 task_init();
 
 void
-task_new(task_t* task);
+task_init_load_text(const char* text, size_t size);
 
 void
 task_destroy(task_t* task);

@@ -12,6 +12,9 @@ static_assert(tss_t_is_0x68_bytes_long, sizeof(tss_t) == 0x68);
 static tss_t
 tss;
 
+static task_t
+init_task;
+
 void
 task_init()
 {
@@ -25,11 +28,7 @@ task_init()
     tss.iopb = sizeof(tss);
 
     __asm__ volatile("ltr ax" :: "a"((uint16_t)GDT_TSS | 3));
-}
 
-void
-task_new(task_t* task)
-{
     // initialise task page directory
     uint32_t* current_page_directory = (uint32_t*)CURRENT_PAGE_DIRECTORY;
     uint32_t* task_page_directory = kernel_page_alloc_zeroed();
@@ -42,21 +41,37 @@ task_new(task_t* task)
         task_page_directory[i] = current_page_directory[i];
     }
 
-    task->page_directory = task_page_directory;
-    task->page_directory_phys = virt_to_phys((virt_t)task_page_directory);
-    task->page_directory[1023] = task->page_directory_phys | PE_PRESENT | PE_READ_WRITE;
+    init_task.page_directory = task_page_directory;
+    init_task.page_directory_phys = virt_to_phys((virt_t)task_page_directory);
+    init_task.page_directory[1023] = init_task.page_directory_phys | PE_PRESENT | PE_READ_WRITE;
 
     // initialize kernel stack page table for new task
     uint32_t* kernel_stack_page_table = kernel_page_alloc_zeroed();
-    task->page_directory[KERNEL_STACK_BEGIN / (4*1024*1024)] = virt_to_phys((virt_t)kernel_stack_page_table) | PE_PRESENT | PE_READ_WRITE;
+    init_task.page_directory[KERNEL_STACK_BEGIN / (4*1024*1024)] = virt_to_phys((virt_t)kernel_stack_page_table) | PE_PRESENT | PE_READ_WRITE;
 
-    task->kernel_stack = kernel_page_alloc_zeroed();
-    kernel_stack_page_table[1023] = virt_to_phys((virt_t)task->kernel_stack) | PE_PRESENT | PE_READ_WRITE;
+    init_task.kernel_stack = kernel_page_alloc_zeroed();
+    kernel_stack_page_table[1023] = virt_to_phys((virt_t)init_task.kernel_stack) | PE_PRESENT | PE_READ_WRITE;
 
     // user stack
     uint32_t* user_stack_page_table = kernel_page_alloc_zeroed();
-    task->page_directory[1022] = virt_to_phys((virt_t)user_stack_page_table) | PE_PRESENT | PE_READ_WRITE | PE_USER;
+    init_task.page_directory[1022] = virt_to_phys((virt_t)user_stack_page_table) | PE_PRESENT | PE_READ_WRITE | PE_USER;
     user_stack_page_table[1023] = page_alloc() | PE_PRESENT | PE_READ_WRITE | PE_USER;
+}
+
+void
+task_init_load_text(const char* text, size_t size)
+{
+    set_page_directory(init_task.page_directory_phys);
+
+    for(size_t i = 0; i < size; i += PAGE_SIZE) {
+        phys_t page = page_alloc();
+        page_map(USER_BEGIN + i, page, PE_PRESENT | PE_USER);
+        size_t copy_size = size - i;
+        if(copy_size > PAGE_SIZE) {
+            copy_size = PAGE_SIZE;
+        }
+        memcpy((void*)(USER_BEGIN + i), (void*)(text + i), copy_size);
+    }
 }
 
 void

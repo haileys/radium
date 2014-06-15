@@ -50,22 +50,9 @@ kmain(multiboot_info_t* mb_, uint32_t magic)
     task_init();
     syscall_init();
 
-    task_t init_task;
-    task_new(&init_task);
-
     multiboot_module_t* mod = find_module("/init.bin");
 
-    set_page_directory(init_task.page_directory_phys);
-
-    for(size_t i = 0; i < mod->mod_end - mod->mod_start; i += PAGE_SIZE) {
-        phys_t page = page_alloc();
-        page_map(USER_BEGIN + i, page, PE_PRESENT | PE_USER);
-        size_t size = mod->mod_end - i;
-        if(size > PAGE_SIZE) {
-            size = PAGE_SIZE;
-        }
-        memcpy((void*)(USER_BEGIN + i), (void*)(mod->mod_start + i), size);
-    }
+    task_init_load_text((const char*)mod->mod_start, mod->mod_end - mod->mod_start);
 
     sched_begin_multitasking();
 

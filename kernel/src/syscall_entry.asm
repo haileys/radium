@@ -37,6 +37,7 @@ syscall_entry:
     add esp, 4
 
     popa
+    sti
     sysexit
 
     .msg db "syscall!", 10, 0

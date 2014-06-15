@@ -60,19 +60,13 @@ generic_exception 13, "general protection fault"
 
 ; page fault
 begin_isr 14
-    ; setup something that looks like a normal stack frame so panic can get a
-    ; proper backtrace
-    pop eax ; pop EFLAGS
-    push ebp
-    mov ebp, esp
-
     mov eax, cr2
     push eax
     push .msg
     call panic
     iret
 
-    .msg db "page fault at 0x%x", 0
+    .msg db "page fault at 0x%x, error code: %x", 0
 end_isr 14
 
 ; PIT irq

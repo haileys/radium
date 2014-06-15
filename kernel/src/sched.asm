@@ -1,11 +1,11 @@
 use32
 
-global sched_begin_multitasking
+global sched_begin
 
 %define USER_CODE (0x18 | 3)
 %define USER_DATA (0x20 | 3)
 
-sched_begin_multitasking:
+sched_begin:
     mov ax, USER_DATA
     mov ds, ax
     mov es, ax

@@ -2,6 +2,6 @@
 #define SCHED_H
 
 void
-sched_begin_multitasking();
+sched_begin();
 
 #endif

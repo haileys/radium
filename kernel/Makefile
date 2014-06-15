@@ -16,6 +16,7 @@ OBJECTS = \
 	src/paging_init.o \
 	src/panic.o \
 	src/panic_helper.o \
+	src/pit.o \
 	src/sched.o \
 	src/string.o \
 	src/syscall_entry.o \

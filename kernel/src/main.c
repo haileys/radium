@@ -5,6 +5,7 @@
 #include "multiboot.h"
 #include "paging.h"
 #include "panic.h"
+#include "pit.h"
 #include "sched.h"
 #include "string.h"
 #include "syscall.h"
@@ -33,8 +34,6 @@ kmain(multiboot_info_t* mb_, uint32_t magic)
     (void)magic;
     mb = mb_;
 
-    interrupts_disable();
-
     console_init();
 
     printf("Radium booting from %s.\n", (const char*)mb->boot_loader_name);
@@ -46,6 +45,7 @@ kmain(multiboot_info_t* mb_, uint32_t magic)
 
     gdt_init();
     idt_init();
+    pit_set_frequency(100);
     paging_init(mb);
     task_init();
     syscall_init();

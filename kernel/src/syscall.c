@@ -1,6 +1,7 @@
 #include <radium.h>
 
 #include "console.h"
+#include "panic.h"
 #include "sched.h"
 #include "syscall.h"
 #include "task.h"
@@ -19,7 +20,10 @@ static uint32_t
 syscall_exit(registers_t* regs)
 {
     uint8_t code = regs->ebx & 0xff;
-    printf("task exited with status: %d\n", code);
+
+    if(current_task->pid == 1) {
+        panic("init exited with status: %d", code);
+    }
 
     // TODO - actually implement exit
     __asm__ volatile("cli\nhlt");

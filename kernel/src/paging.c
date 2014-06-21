@@ -148,3 +148,24 @@ page_temp_unmap()
     invlpg(0);
     critical_end();
 }
+
+bool
+page_is_user_mapped(virt_t virt)
+{
+    uint32_t dir_i = virt / (1024 * PAGE_SIZE);
+    uint32_t base_i = (virt / PAGE_SIZE);
+
+    uint32_t* page_directory = (uint32_t*)CURRENT_PAGE_DIRECTORY;
+
+    if(!(page_directory[dir_i] & (PE_PRESENT | PE_USER))) {
+        return false;
+    }
+
+    uint32_t* page_table_base = (uint32_t*)CURRENT_PAGE_TABLE_BASE;
+
+    if(!(page_table_base[base_i] & (PE_PRESENT | PE_USER))) {
+        return false;
+    }
+
+    return true;
+}

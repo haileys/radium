@@ -53,4 +53,7 @@ page_temp_map(phys_t phys_page);
 void
 page_temp_unmap();
 
+bool
+page_is_user_mapped(virt_t virt);
+
 #endif

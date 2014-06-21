@@ -10,8 +10,9 @@
 static uint32_t
 syscall_regdump(registers_t* regs)
 {
-    printf("syscall_regdump: eax=%x, ebx=%x, ecx=%x, edx=%x\n", regs->eax, regs->ebx, regs->ecx, regs->edx);
-    printf("                 esp=%x, ebp=%x, esi=%x, edi=%x\n", regs->esp, regs->ebp, regs->esi, regs->edi);
+    printf("process %d register dump:\n", current_task->pid);
+    printf("    eax=%x, ebx=%x, ecx=%x, edx=%x\n", regs->eax, regs->ebx, regs->ecx, regs->edx);
+    printf("    esp=%x, ebp=%x, esi=%x, edi=%x\n", regs->esp, regs->ebp, regs->esi, regs->edi);
 
     return 0;
 }

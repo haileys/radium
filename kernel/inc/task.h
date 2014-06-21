@@ -95,7 +95,7 @@ void
 task_init();
 
 void
-task_init_load_text(const char* text, size_t size);
+task_boot_init(const char* init_bin, size_t size) __attribute__((noreturn));
 
 void
 task_destroy(task_t* task);

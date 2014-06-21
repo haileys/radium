@@ -54,12 +54,5 @@ kmain(multiboot_info_t* mb_, uint32_t magic)
 
     multiboot_module_t* mod = find_module("/init.bin");
 
-    task_init_load_text((const char*)mod->mod_start, mod->mod_end - mod->mod_start);
-
-    critical_reset();
-    sched_begin();
-
-    while(1) {
-        __asm__ volatile("hlt");
-    }
+    task_boot_init((const char*)mod->mod_start, mod->mod_end - mod->mod_start);
 }

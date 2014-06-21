@@ -1,8 +1,10 @@
 #include "console.h"
 #include "gdt.h"
+#include "idt.h"
 #include "kernel_page.h"
 #include "paging.h"
 #include "panic.h"
+#include "sched.h"
 #include "string.h"
 #include "task.h"
 #include "util.h"
@@ -65,7 +67,7 @@ task_init()
 }
 
 void
-task_init_load_text(const char* text, size_t size)
+task_boot_init(const char* text, size_t size)
 {
     set_page_directory(init_task.page_directory_phys);
 
@@ -78,6 +80,9 @@ task_init_load_text(const char* text, size_t size)
         }
         memcpy((void*)(USER_BEGIN + i), (void*)(text + i), copy_size);
     }
+
+    critical_reset();
+    sched_begin();
 }
 
 void

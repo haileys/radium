@@ -21,7 +21,9 @@ syscall_exit(registers_t* regs)
     uint8_t code = regs->ebx & 0xff;
     printf("task exited with status: %d\n", code);
 
-    while(1); // TODO - actually implement exit
+    // TODO - actually implement exit
+    __asm__ volatile("cli\nhlt");
+
     return 0;
 }
 

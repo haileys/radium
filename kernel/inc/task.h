@@ -98,6 +98,9 @@ task_init();
 void
 task_boot_init(const char* init_bin, size_t size) __attribute__((noreturn));
 
+task_t*
+task_fork();
+
 void
 task_destroy(task_t* task);
 

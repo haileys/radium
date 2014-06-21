@@ -119,6 +119,57 @@ task_boot_init(const char* text, size_t size)
     sched_begin();
 }
 
+static void
+copy_userland_pages(task_t* new_task)
+{
+    uint32_t* current_page_directory = (uint32_t*)CURRENT_PAGE_DIRECTORY;
+
+    for(size_t dir_i = USER_BEGIN / (PAGE_SIZE * 1024); dir_i < 1023; dir_i++) {
+        if(!current_page_directory[dir_i]) {
+            continue;
+        }
+
+        uint32_t* current_page_table = (uint32_t*)(CURRENT_PAGE_TABLE_BASE + dir_i * PAGE_SIZE);
+
+        uint32_t* new_page_table = kernel_page_alloc();
+        new_task->page_directory[dir_i] =
+            virt_to_phys((virt_t)new_page_table) | (current_page_directory[dir_i] & PE_FLAG_MASK);
+
+        for(size_t tab_i = 0; tab_i < 1024; tab_i++) {
+            uint32_t current_entry = current_page_table[tab_i];
+            void* current_virt = (void*)((dir_i * PAGE_SIZE * 1024) + (tab_i * PAGE_SIZE));
+
+            if(!(current_entry & PE_PRESENT)) {
+                continue;
+            }
+
+            phys_t new_page = page_alloc();
+
+            void* new_page_mapping = page_temp_map(new_page);
+            memcpy(new_page_mapping, current_virt, PAGE_SIZE);
+            page_temp_unmap();
+
+            new_page_table[tab_i] = new_page | (current_entry & PE_FLAG_MASK);
+        }
+    }
+}
+
+task_t*
+task_fork_inner()
+{
+    task_t* new_task = alloc_empty_task();
+    create_skeleton_page_directory(new_task);
+
+    memcpy(&new_task->fpu_state, &current_task->fpu_state, sizeof(new_task->fpu_state));
+    memcpy(new_task->kernel_stack, current_task->kernel_stack, PAGE_SIZE);
+
+    copy_userland_pages(new_task);
+
+    new_task->syscall_registers = current_task->syscall_registers;
+
+    return new_task;
+}
+
 void
 task_destroy(task_t* task)
 {
@@ -126,4 +177,14 @@ task_destroy(task_t* task)
     kernel_page_free((void*)(task->page_directory[KERNEL_STACK_BEGIN / (4*1024*1024)] & PE_ADDR_MASK));
     kernel_page_free(task->page_directory);
     memset(task, 0, sizeof(*task));
+}
+
+task_t*
+sched_next()
+{
+    task_t* two = task_for_pid(2);
+    if(two) {
+        return current_task = two;
+    }
+    return current_task;
 }

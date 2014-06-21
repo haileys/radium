@@ -2,7 +2,7 @@
 #define SCHED_H
 
 void
-sched_begin();
+sched_begin() __attribute__((noreturn));
 
 void
 sched_switch();

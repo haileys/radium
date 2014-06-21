@@ -14,6 +14,7 @@
 #define USER_BEGIN               0x10000000ul
 #define USER_STACK_END           0xffc00000ul
 #define CURRENT_PAGE_DIRECTORY   0xfffff000ul
+#define CURRENT_PAGE_TABLE_BASE  0xffc00000ul
 
 typedef enum {
     PE_PRESENT    = 1 << 0,

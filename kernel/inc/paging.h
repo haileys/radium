@@ -46,4 +46,10 @@ page_unmap(virt_t virt_page);
 phys_t
 virt_to_phys(virt_t virt);
 
+void*
+page_temp_map(phys_t phys_page);
+
+void
+page_temp_unmap();
+
 #endif

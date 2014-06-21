@@ -84,7 +84,8 @@ typedef struct {
     /* 524 */ uint32_t* page_directory;
     /* 528 */ phys_t page_directory_phys;
     /* 532 */ registers_t* syscall_registers;
-    /* 536 */
+    /* 536 */ uint32_t pid;
+    /* 540 */
 }
 task_t;
 

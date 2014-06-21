@@ -4,6 +4,6 @@
 int
 main()
 {
-    regdump();
+    fork();
     return 123;
 }

@@ -12,6 +12,9 @@ exit(int status);
 void
 yield();
 
+uint32_t
+fork();
+
 int
 main();
 

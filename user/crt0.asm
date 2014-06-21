@@ -3,6 +3,7 @@ use32
 global regdump
 global exit
 global yield
+global fork
 
 extern main
 
@@ -37,6 +38,18 @@ yield:
     mov ecx, esp
     mov edx, .ret
     mov eax, 2 ; syscall number 0
+    sysenter
+.ret:
+    pop edx
+    pop ecx
+    ret
+
+fork:
+    push ecx
+    push edx
+    mov ecx, esp
+    mov edx, .ret
+    mov eax, 3 ; syscall number 0
     sysenter
 .ret:
     pop edx

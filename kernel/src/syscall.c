@@ -44,8 +44,16 @@ static uint32_t
 syscall_fork(registers_t* regs)
 {
     (void)regs;
-    // stubbed for now
-    return 0;
+
+    task_t* new_task = task_fork();
+
+    if(new_task) {
+        // parent
+        return new_task->pid;
+    } else {
+        // child
+        return 0;
+    }
 }
 
 typedef uint32_t(syscall_t)(registers_t*);

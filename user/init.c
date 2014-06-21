@@ -5,5 +5,7 @@ int
 main()
 {
     fork();
+    regdump();
+    yield();
     return 123;
 }

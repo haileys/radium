@@ -87,15 +87,23 @@ again:
     goto again;
 }
 
+static uint32_t
+syscall_console_log(registers_t* regs)
+{
+    console_puts((const char*)REG_ARG1(regs), REG_ARG2(regs));
+    return 0;
+}
+
 typedef uint32_t(syscall_t)(registers_t*);
 
 static syscall_t*
 syscall_table[] = {
-    [SYS_REGDUMP] = syscall_regdump,
-    [SYS_EXIT]    = syscall_exit,
-    [SYS_YIELD]   = syscall_yield,
-    [SYS_FORK]    = syscall_fork,
-    [SYS_WAIT]    = syscall_wait,
+    [SYS_REGDUMP]       = syscall_regdump,
+    [SYS_EXIT]          = syscall_exit,
+    [SYS_YIELD]         = syscall_yield,
+    [SYS_FORK]          = syscall_fork,
+    [SYS_WAIT]          = syscall_wait,
+    [SYS_CONSOLE_LOG]   = syscall_console_log,
 };
 
 void

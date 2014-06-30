@@ -30,6 +30,9 @@ fork();
 uint32_t
 wait();
 
+void
+console_log(const char* str);
+
 int
 main();
 

@@ -30,3 +30,15 @@ wait()
 {
     return _syscall0(SYS_WAIT);
 }
+
+void
+console_log(const char* str)
+{
+    uint32_t len = 0;
+
+    for(const char* p = str; *p; p++) {
+        len++;
+    }
+
+    _syscall2(SYS_CONSOLE_LOG, (uint32_t)str, len);
+}

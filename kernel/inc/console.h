@@ -7,7 +7,7 @@ void
 console_init();
 
 void
-console_puts(const char* str);
+console_puts(const char* str, uint32_t len);
 
 void
 printf(const char* format, ...);

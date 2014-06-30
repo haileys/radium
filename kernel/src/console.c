@@ -107,9 +107,9 @@ putc(char c)
 }
 
 void
-console_puts(const char* str)
+console_puts(const char* str, uint32_t len)
 {
-    while(*str) {
+    while(len--) {
         putc(*str++);
     }
 
@@ -204,17 +204,18 @@ vprintf(const char* format, va_list va)
             case 'd': {
                 char buff[16];
                 itoa(va_arg(va, int), buff);
-                console_puts(buff);
+                console_puts(buff, strlen(buff));
                 break;
             }
             case 'x': {
                 char buff[16];
                 utox(va_arg(va, uint32_t), buff);
-                console_puts(buff);
+                console_puts(buff, strlen(buff));
                 break;
             }
             case 's': {
-                console_puts(va_arg(va, const char*));
+                const char* str = va_arg(va, const char*);
+                console_puts(str, strlen(str));
                 break;
             }
             case 'c': {

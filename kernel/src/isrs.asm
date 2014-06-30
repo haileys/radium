@@ -2,7 +2,6 @@ global idt_init_asm
 global idt_load
 extern interrupts_register_isr
 extern idtr
-extern console_puts
 extern panic
 extern sched_switch
 

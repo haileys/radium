@@ -102,10 +102,15 @@ typedef struct task {
     task_state_t state;
     uint8_t exit_status;
 
-    // in a live process, wait_queue is a linked list of dead processes that
-    // the parent needs to call wait() on. in a dead process, this is the
-    // 'next' pointer of said linked list
-    struct task* wait_queue;
+    union {
+        struct {
+            struct task* head;
+            struct task* tail;
+        } live;
+        struct {
+            struct task* next;
+        } dead;
+    } wait_queue;
 }
 task_t;
 
@@ -120,6 +125,9 @@ task_boot_init(const char* init_bin, size_t size) __attribute__((noreturn));
 
 task_t*
 task_fork();
+
+void
+task_kill(task_t* task, uint8_t status);
 
 void
 task_destroy(task_t* task);

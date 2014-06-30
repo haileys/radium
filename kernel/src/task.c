@@ -40,7 +40,8 @@ alloc_empty_task()
         tasks[pid] = kernel_page_alloc_zeroed();
         tasks[pid]->state = TASK_READY;
         tasks[pid]->pid = pid;
-        tasks[pid]->wait_queue = NULL;
+        tasks[pid]->wait_queue.live.head = NULL;
+        tasks[pid]->wait_queue.live.tail = NULL;
         return tasks[pid];
     }
 
@@ -171,6 +172,50 @@ task_fork_inner()
     new_task->syscall_registers = current_task->syscall_registers;
 
     return new_task;
+}
+
+void
+task_kill(task_t* task, uint8_t status)
+{
+    task->exit_status = status;
+
+    task_t* parent = task_for_pid(task->ppid);
+
+    // if this task has any children in the wait queue, just clean them up as
+    // nothing is interested in them anymore.
+    task_t* waitable_child = task->wait_queue.live.head;
+    while(waitable_child) {
+        task_t* next_waitable_child = waitable_child->wait_queue.dead.next;
+        task_destroy(waitable_child);
+        waitable_child = next_waitable_child;
+    }
+
+    // reparent children - TODO don't scan all processes...
+    for(uint32_t i = 2; i < countof(tasks); i++) {
+        task_t* child = task_for_pid(i);
+        if(child && child->ppid == task->pid) {
+            child->ppid = 1;
+        }
+    }
+
+    // insert this task into the parent's wait queue
+    if(parent->wait_queue.live.tail) {
+        parent->wait_queue.live.tail->wait_queue.dead.next = task;
+        parent->wait_queue.live.tail = task;
+    } else {
+        parent->wait_queue.live.head = task;
+        parent->wait_queue.live.tail = task;
+    }
+
+    task->wait_queue.dead.next = NULL;
+
+    // wake parent up if it's blocked in wait()
+    if(parent->state == TASK_BLOCK_WAIT) {
+        parent->state = TASK_READY;
+    }
+
+    // set state to EXITING so the scheduler never reschedules this task
+    current_task->state = TASK_EXITING;
 }
 
 void

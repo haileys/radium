@@ -20,14 +20,16 @@ syscall_regdump(registers_t* regs)
 static uint32_t
 syscall_exit(registers_t* regs)
 {
-    uint8_t code = regs->ebx & 0xff;
+    uint8_t status = regs->ebx & 0xff;
 
     if(current_task->pid == 1) {
-        panic("init exited with status: %d", code);
+        panic("init exited with status: %d", status);
     }
 
-    // TODO - actually implement exit
-    __asm__ volatile("cli\nhlt");
+    task_kill(current_task, status);
+
+    // goodbye!
+    sched_switch();
 
     return 0;
 }

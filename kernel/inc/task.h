@@ -97,6 +97,7 @@ typedef struct task {
     registers_t* syscall_registers;
 
     uint32_t pid;
+    uint32_t ppid;
 
     task_state_t state;
     uint8_t exit_status;

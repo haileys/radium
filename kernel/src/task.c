@@ -95,6 +95,8 @@ task_init()
     init_task->page_directory[1022] = virt_to_phys((virt_t)user_stack_page_table) | PE_PRESENT | PE_READ_WRITE | PE_USER;
     user_stack_page_table[1023] = page_alloc() | PE_PRESENT | PE_READ_WRITE | PE_USER;
 
+    init_task->ppid = 0;
+
     current_task = init_task;
 }
 
@@ -163,6 +165,8 @@ task_fork_inner()
     memcpy(new_task->kernel_stack, current_task->kernel_stack, PAGE_SIZE);
 
     copy_userland_pages(new_task);
+
+    new_task->ppid = current_task->pid;
 
     new_task->syscall_registers = current_task->syscall_registers;
 

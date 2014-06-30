@@ -82,27 +82,3 @@ interrupts_enable()
 {
     __asm__ volatile("sti");
 }
-
-static uint32_t
-critical_nesting = 0;
-
-void
-critical_begin()
-{
-    interrupts_disable();
-    critical_nesting++;
-}
-
-void
-critical_end()
-{
-    if(--critical_nesting == 0) {
-        interrupts_enable();
-    }
-}
-
-void
-critical_reset()
-{
-    critical_nesting = 0;
-}

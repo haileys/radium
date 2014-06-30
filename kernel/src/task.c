@@ -115,7 +115,6 @@ task_boot_init(const char* text, size_t size)
         memcpy((void*)(USER_BEGIN + i), (void*)(text + i), copy_size);
     }
 
-    critical_reset();
     sched_begin();
 }
 

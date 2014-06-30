@@ -29,12 +29,9 @@ kernel_page_init(virt_t begin_, virt_t end_)
 void*
 kernel_page_alloc()
 {
-    critical_begin();
-
     if(next_free) {
         kernel_page_t* page = next_free;
         next_free = next_free->next;
-        critical_end();
         return page;
     }
 
@@ -45,7 +42,6 @@ kernel_page_alloc()
     page_map((virt_t)allocated_to, page_alloc(), PE_PRESENT | PE_READ_WRITE);
     void* retn = allocated_to++;
 
-    critical_end();
     return retn;
 }
 
@@ -62,8 +58,6 @@ kernel_page_free(void* ptr)
 {
     kernel_page_t* page = ptr;
 
-    critical_begin();
     page->next = next_free;
     next_free = page;
-    critical_end();
 }

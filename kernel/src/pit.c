@@ -14,11 +14,7 @@ pit_set_frequency(uint32_t hz)
         panic("frequency too low");
     }
 
-    critical_begin();
-
     outb(0x43, 0x36);
     outb(0x40, divisor & 0xff);
     outb(0x40, (divisor >> 8) & 0xff);
-
-    critical_end();
 }

@@ -221,9 +221,8 @@ task_kill(task_t* task, uint8_t status)
 void
 task_destroy(task_t* task)
 {
-    kernel_page_free(task->kernel_stack);
-    kernel_page_free((void*)(task->page_directory[KERNEL_STACK_BEGIN / (4*1024*1024)] & PE_ADDR_MASK));
-    kernel_page_free(task->page_directory);
+    tasks[task->pid] = NULL;
+    // TODO - delete memory allocated for task
     memset(task, 0, sizeof(*task));
 }
 

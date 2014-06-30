@@ -15,6 +15,9 @@ yield();
 uint32_t
 fork();
 
+uint32_t
+wait();
+
 int
 main();
 

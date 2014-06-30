@@ -4,8 +4,13 @@
 int
 main()
 {
-    fork();
-    regdump();
-    yield();
-    return 123;
+    if(fork()) {
+        wait();
+        return 123;
+    } else {
+        regdump();
+        yield();
+        regdump();
+        return 456;
+    }
 }

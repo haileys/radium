@@ -4,6 +4,7 @@ global _regdump
 global _exit
 global _yield
 global _fork
+global _wait
 
 extern _main
 
@@ -52,6 +53,18 @@ _fork:
     mov eax, 3 ; syscall number 3
     sysenter
 .ret:
+    pop edx
+    pop ecx
+    ret
+
+_wait:
+    push ecx
+    push edx
+    mov ecx, esp
+    mov edx, .ret2
+    mov eax, 4 ; syscall number 4
+    sysenter
+.ret2:
     pop edx
     pop ecx
     ret

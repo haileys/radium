@@ -58,6 +58,28 @@ syscall_fork(registers_t* regs)
     }
 }
 
+static uint32_t
+syscall_wait(registers_t* regs)
+{
+    (void)regs;
+
+again:
+    if(current_task->wait_queue.live.head) {
+        task_t* child = current_task->wait_queue.live.head;
+        current_task->wait_queue.live.head = child->wait_queue.dead.next;
+
+        uint32_t child_pid = child->pid;
+
+        task_destroy(child);
+
+        return child_pid;
+    }
+
+    current_task->state = TASK_BLOCK_WAIT;
+    sched_switch();
+    goto again;
+}
+
 typedef uint32_t(syscall_t)(registers_t*);
 
 static syscall_t*
@@ -66,6 +88,7 @@ syscall_table[] = {
     [SYS_EXIT]    = syscall_exit,
     [SYS_YIELD]   = syscall_yield,
     [SYS_FORK]    = syscall_fork,
+    [SYS_WAIT]    = syscall_wait,
 };
 
 void

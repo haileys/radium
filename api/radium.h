@@ -7,5 +7,6 @@
 #define SYS_EXIT    1
 #define SYS_YIELD   2
 #define SYS_FORK    3
+#define SYS_WAIT    4
 
 #endif

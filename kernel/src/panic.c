@@ -1,5 +1,4 @@
 #include "console.h"
-#include "idt.h"
 #include "panic.h"
 #include "stdarg.h"
 #include "types.h"
@@ -22,7 +21,7 @@ panic_print_backtrace() __attribute__((noreturn));
 void
 panic(const char* format, ...)
 {
-    interrupts_disable();
+    __asm__ volatile("cli");
 
     va_list va;
     va_start(va, format);

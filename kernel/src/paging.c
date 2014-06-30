@@ -1,5 +1,4 @@
 #include "console.h"
-#include "idt.h"
 #include "paging.h"
 #include "panic.h"
 #include "string.h"

@@ -70,15 +70,3 @@ idt_init()
     idtr.offset = idt;
     idt_load();
 }
-
-void
-interrupts_disable()
-{
-    __asm__ volatile("cli");
-}
-
-void
-interrupts_enable()
-{
-    __asm__ volatile("sti");
-}

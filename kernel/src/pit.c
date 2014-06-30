@@ -1,4 +1,3 @@
-#include "idt.h"
 #include "io.h"
 #include "panic.h"
 #include "pit.h"

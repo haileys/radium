@@ -4,10 +4,4 @@
 void
 idt_init();
 
-void
-interrupts_disable();
-
-void
-interrupts_enable();
-
 #endif

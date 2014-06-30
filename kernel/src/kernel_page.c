@@ -1,4 +1,3 @@
-#include "idt.h"
 #include "kernel_page.h"
 #include "paging.h"
 #include "panic.h"

@@ -10,61 +10,40 @@ extern _main
 
 section .crt0
 
+%macro perform_syscall 1
+    push ecx
+    push edx
+    mov ecx, esp
+    mov edx, .ret
+    mov eax, %1
+    sysenter
+.ret:
+    pop edx
+    pop ecx
+%endmacro
+
 start:
     call _main
     push eax
     call _exit
 
 _regdump:
-    push ecx
-    push edx
-    mov ecx, esp
-    mov edx, .ret
-    mov eax, 0 ; syscall number 0
-    sysenter
-.ret:
-    pop edx
-    pop ecx
+    perform_syscall 0
     ret
 
 _exit:
-    mov eax, 1     ; syscall number 1
-    mov ebx, [esp+4] ; pass exit code in EBX
-    ; don't bother setting ECX and EDX because this syscall never returns
-    sysenter
+    mov ebx, [esp+4] ; exit code
+    perform_syscall 1
+    ; unreachable
 
 _yield:
-    push ecx
-    push edx
-    mov ecx, esp
-    mov edx, .ret
-    mov eax, 2 ; syscall number 2
-    sysenter
-.ret:
-    pop edx
-    pop ecx
+    perform_syscall 2
     ret
 
 _fork:
-    push ecx
-    push edx
-    mov ecx, esp
-    mov edx, .ret
-    mov eax, 3 ; syscall number 3
-    sysenter
-.ret:
-    pop edx
-    pop ecx
+    perform_syscall 3
     ret
 
 _wait:
-    push ecx
-    push edx
-    mov ecx, esp
-    mov edx, .ret2
-    mov eax, 4 ; syscall number 4
-    sysenter
-.ret2:
-    pop edx
-    pop ecx
+    perform_syscall 4
     ret

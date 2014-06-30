@@ -6,7 +6,7 @@ CFLAGS = \
 
 all: init.bin
 
-%.bin: crt0.o %.o
+%.bin: crt0.o crt1.o %.o
 	@echo ld $@
 	@ld -o $@ -T linker.ld $^
 

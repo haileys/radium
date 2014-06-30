@@ -1,21 +1,18 @@
 use32
 
-global _regdump
-global _exit
-global _yield
-global _fork
-global _wait
+global __syscall0
+global __syscall1
 
 extern _main
+extern _exit
 
 section .crt0
 
-%macro perform_syscall 1
+%macro perform_syscall 0
     push ecx
     push edx
     mov ecx, esp
     mov edx, .ret
-    mov eax, %1
     sysenter
 .ret:
     pop edx
@@ -27,23 +24,15 @@ start:
     push eax
     call _exit
 
-_regdump:
-    perform_syscall 0
+__syscall0:
+    mov eax, [esp+4]
+    perform_syscall
     ret
 
-_exit:
-    mov ebx, [esp+4] ; exit code
-    perform_syscall 1
-    ; unreachable
-
-_yield:
-    perform_syscall 2
-    ret
-
-_fork:
-    perform_syscall 3
-    ret
-
-_wait:
-    perform_syscall 4
+__syscall1:
+    push ebx
+    mov ebx, [esp+12]
+    mov eax, [esp+8]
+    perform_syscall
+    pop ebx
     ret

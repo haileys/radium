@@ -14,9 +14,11 @@ extern sched_switch
 %endmacro
 
 %macro ack_irq 0
+    push ax
     mov al, 0x20
     out 0xa0, al
     out 0x20, al
+    pop ax
 %endmacro
 
 %macro begin_isr 1
@@ -71,9 +73,7 @@ end_isr 14
 
 ; PIT irq
 begin_isr 32
-    push eax
     ack_irq
-    pop eax
 
     call sched_switch
     iret

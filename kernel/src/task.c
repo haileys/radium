@@ -222,8 +222,14 @@ void
 task_destroy(task_t* task)
 {
     tasks[task->pid] = NULL;
-    // TODO - delete memory allocated for task
-    memset(task, 0, sizeof(*task));
+
+    kernel_page_free(task->kernel_stack);
+
+    // TODO - free pages allocated for the task that are referenced from its
+    // page directory
+
+    kernel_page_free(task->page_directory);
+    kernel_page_free(task);
 }
 
 task_t*

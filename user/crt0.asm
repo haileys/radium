@@ -1,20 +1,20 @@
 use32
 
-global regdump
-global exit
-global yield
-global fork
+global _regdump
+global _exit
+global _yield
+global _fork
 
-extern main
+extern _main
 
 section .crt0
 
 start:
-    call main
+    call _main
     push eax
-    call exit
+    call _exit
 
-regdump:
+_regdump:
     push ecx
     push edx
     mov ecx, esp
@@ -26,30 +26,30 @@ regdump:
     pop ecx
     ret
 
-exit:
+_exit:
     mov eax, 1     ; syscall number 1
     mov ebx, [esp+4] ; pass exit code in EBX
     ; don't bother setting ECX and EDX because this syscall never returns
     sysenter
 
-yield:
+_yield:
     push ecx
     push edx
     mov ecx, esp
     mov edx, .ret
-    mov eax, 2 ; syscall number 0
+    mov eax, 2 ; syscall number 2
     sysenter
 .ret:
     pop edx
     pop ecx
     ret
 
-fork:
+_fork:
     push ecx
     push edx
     mov ecx, esp
     mov edx, .ret
-    mov eax, 3 ; syscall number 0
+    mov eax, 3 ; syscall number 3
     sysenter
 .ret:
     pop edx

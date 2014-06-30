@@ -6,7 +6,7 @@ main()
     console_log("Hello world from init!\n");
 
     if(fork()) {
-        wait();
+        wait(NULL);
         return 123;
     } else {
         regdump();

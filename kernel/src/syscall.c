@@ -94,7 +94,11 @@ syscall_fork(registers_t* regs)
 static uint32_t
 syscall_wait(registers_t* regs)
 {
-    (void)regs;
+    if(REG_ARG1(regs) != 0 && !valid_user_buffer(REG_ARG1(regs), sizeof(int))) {
+        return -EFAULT;
+    }
+
+    int* stat_loc = (int*)REG_ARG1(regs);
 
 again:
     if(current_task->wait_queue.live.head) {
@@ -102,8 +106,13 @@ again:
         current_task->wait_queue.live.head = child->wait_queue.dead.next;
 
         uint32_t child_pid = child->pid;
+        uint8_t child_status = child->exit_status;
 
         task_destroy(child);
+
+        if(stat_loc) {
+            *stat_loc = child_status;
+        }
 
         return child_pid;
     }

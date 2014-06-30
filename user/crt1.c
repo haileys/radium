@@ -26,9 +26,9 @@ fork()
 }
 
 uint32_t
-wait()
+wait(int* stat_loc)
 {
-    return _syscall0(SYS_WAIT);
+    return _syscall1(SYS_WAIT, (uint32_t)stat_loc);
 }
 
 void

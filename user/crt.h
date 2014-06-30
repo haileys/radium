@@ -3,6 +3,8 @@
 
 typedef unsigned int uint32_t;
 
+#define NULL ((void*)0)
+
 uint32_t
 _syscall0(uint32_t number);
 
@@ -28,7 +30,7 @@ uint32_t
 fork();
 
 uint32_t
-wait();
+wait(int* stat_loc);
 
 void
 console_log(const char* str);

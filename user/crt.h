@@ -9,6 +9,12 @@ _syscall0(uint32_t number);
 uint32_t
 _syscall1(uint32_t number, uint32_t arg1);
 
+uint32_t
+_syscall2(uint32_t number, uint32_t arg1, uint32_t arg2);
+
+uint32_t
+_syscall3(uint32_t number, uint32_t arg1, uint32_t arg2, uint32_t arg3);
+
 void
 regdump();
 

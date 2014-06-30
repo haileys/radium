@@ -7,6 +7,13 @@
 #include "task.h"
 #include "util.h"
 
+#define REG_VECTOR(regs) ((regs)->eax)
+#define REG_RETURN(regs) ((regs)->eax)
+
+#define REG_ARG1(regs) ((regs)->ebx)
+#define REG_ARG2(regs) ((regs)->edi)
+#define REG_ARG3(regs) ((regs)->esi)
+
 static uint32_t
 syscall_regdump(registers_t* regs)
 {
@@ -20,7 +27,7 @@ syscall_regdump(registers_t* regs)
 static uint32_t
 syscall_exit(registers_t* regs)
 {
-    uint8_t status = regs->ebx & 0xff;
+    uint8_t status = REG_ARG1(regs) & 0xff;
 
     if(current_task->pid == 1) {
         panic("init exited with status: %d", status);
@@ -94,21 +101,21 @@ syscall_table[] = {
 void
 syscall_dispatch(registers_t* regs)
 {
-    if(regs->eax > countof(syscall_table)) {
-        regs->eax = -ENOSYS;
+    if(REG_VECTOR(regs) > countof(syscall_table)) {
+        REG_RETURN(regs) = -ENOSYS;
         return;
     }
 
     syscall_t* func = syscall_table[regs->eax];
 
     if(!func) {
-        regs->eax = -ENOSYS;
+        REG_RETURN(regs) = -ENOSYS;
         return;
     }
 
     current_task->syscall_registers = regs;
 
-    regs->eax = func(regs);
+    REG_RETURN(regs) = func(regs);
 
     current_task->syscall_registers = NULL;
 }

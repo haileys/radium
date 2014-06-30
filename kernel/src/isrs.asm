@@ -74,7 +74,16 @@ end_isr 14
 begin_isr 32
     ack_irq
 
+    push ebp
+    push dword 0
+    push dword 0
+    mov ebp, esp
+
     call sched_switch
+
+    add esp, 8 ; fix up the fake stack frame we created
+    pop ebp
+
     iret
 end_isr 32
 

@@ -32,9 +32,15 @@ syscall_init:
 syscall_entry:
     pusha
 
-    push esp
+    push dword 0
+    push dword 0
+    mov ebp, esp
+
+    lea eax, [esp + 8]
+    push eax
     call syscall_dispatch
-    add esp, 4
+    add esp, 12 ; 4 bytes for the argument we passed to syscall_dispatch, and
+                ; another 8 to compensate for the fake stack frame we pushed.
 
     popa
 

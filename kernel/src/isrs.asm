@@ -85,4 +85,9 @@ begin_isr 33
     iret
 end_isr 33
 
+; spurious irq
+begin_isr 39
+    iret
+end_isr 39
+
 ret

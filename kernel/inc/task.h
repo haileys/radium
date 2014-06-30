@@ -90,14 +90,21 @@ typedef struct task {
               // allocated within the kernel's identity-mapped region:
     /* 524 */ uint32_t* page_directory;
     /* 528 */ phys_t page_directory_phys;
-    /* 532 */ registers_t* syscall_registers;
-    /* 536 */ uint32_t pid;
-    /* 540 */ task_state_t state;
-    /* 544 */ uint8_t exit_status;
-              // in a live process, wait_queue is a linked list of dead
-              // processes that the parent needs to call wait() on. in a dead
-              // process, this is the 'next' pointer of said linked list
-    /* 548 */ struct task* wait_queue;
+
+    // struct members past this point may be freely rearranged without needing
+    // to update any assembly source.
+
+    registers_t* syscall_registers;
+
+    uint32_t pid;
+
+    task_state_t state;
+    uint8_t exit_status;
+
+    // in a live process, wait_queue is a linked list of dead processes that
+    // the parent needs to call wait() on. in a dead process, this is the
+    // 'next' pointer of said linked list
+    struct task* wait_queue;
 }
 task_t;
 
@@ -115,5 +122,8 @@ task_fork();
 
 void
 task_destroy(task_t* task);
+
+task_t*
+task_for_pid(uint32_t pid);
 
 #endif

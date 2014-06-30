@@ -9,7 +9,6 @@
 #include "util.h"
 
 static_assert(tss_t_is_0x68_bytes_long, sizeof(tss_t) == 0x68);
-static_assert(task_t_is_540_bytes_long, sizeof(task_t) == 548);
 
 static tss_t
 tss;

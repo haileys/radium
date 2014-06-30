@@ -1,6 +1,7 @@
 #include <radium.h>
 
 #include "console.h"
+#include "paging.h"
 #include "panic.h"
 #include "sched.h"
 #include "syscall.h"
@@ -13,6 +14,31 @@
 #define REG_ARG1(regs) ((regs)->ebx)
 #define REG_ARG2(regs) ((regs)->edi)
 #define REG_ARG3(regs) ((regs)->esi)
+
+static bool
+valid_user_buffer(virt_t ptr, size_t len)
+{
+    if((0xfffffffful - len) < ptr) {
+        return false;
+    }
+
+    size_t page_offset = ptr % PAGE_SIZE;
+
+    ptr -= page_offset;
+    len += page_offset;
+
+    virt_t end = ptr + len;
+
+    while(ptr < end) {
+        if(!page_is_user_mapped(ptr)) {
+            return false;
+        }
+
+        ptr += PAGE_SIZE;
+    }
+
+    return true;
+}
 
 static uint32_t
 syscall_regdump(registers_t* regs)
@@ -90,8 +116,12 @@ again:
 static uint32_t
 syscall_console_log(registers_t* regs)
 {
-    console_puts((const char*)REG_ARG1(regs), REG_ARG2(regs));
-    return 0;
+    if(valid_user_buffer(REG_ARG1(regs), REG_ARG2(regs))) {
+        console_puts((const char*)REG_ARG1(regs), REG_ARG2(regs));
+        return 0;
+    } else {
+        return -EFAULT;
+    }
 }
 
 typedef uint32_t(syscall_t)(registers_t*);

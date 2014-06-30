@@ -104,6 +104,9 @@ again:
     if(current_task->wait_queue.live.head) {
         task_t* child = current_task->wait_queue.live.head;
         current_task->wait_queue.live.head = child->wait_queue.dead.next;
+        if(!current_task->wait_queue.live.head) {
+            current_task->wait_queue.live.tail = NULL;
+        }
 
         uint32_t child_pid = child->pid;
         uint8_t child_status = child->exit_status;

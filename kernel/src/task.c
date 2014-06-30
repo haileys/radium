@@ -40,6 +40,7 @@ alloc_empty_task()
         tasks[pid] = kernel_page_alloc_zeroed();
         tasks[pid]->state = TASK_READY;
         tasks[pid]->pid = pid;
+        tasks[pid]->wait_queue = NULL;
         return tasks[pid];
     }
 

@@ -74,15 +74,15 @@ typedef struct {
 tss_t;
 
 typedef enum {
-    TASK_READY   = 1,
-    TASK_SLEEP   = 2,
-    TASK_EXITING = 3,
+    TASK_READY      = 1,
+    TASK_BLOCK_WAIT = 2,
+    TASK_EXITING    = 3,
 }
 task_state_t;
 
 // sched.asm refers to hardcoded offsets within this struct.
 // make sure to change it when changing anything here.
-typedef struct {
+typedef struct task {
     /*   0 */ uint8_t fpu_state[512];
     /* 512 */ uint32_t esp;
     /* 516 */ uint32_t eip;
@@ -94,6 +94,10 @@ typedef struct {
     /* 536 */ uint32_t pid;
     /* 540 */ task_state_t state;
     /* 544 */ uint8_t exit_status;
+              // in a live process, wait_queue is a linked list of dead
+              // processes that the parent needs to call wait() on. in a dead
+              // process, this is the 'next' pointer of said linked list
+    /* 548 */ struct task* wait_queue;
 }
 task_t;
 

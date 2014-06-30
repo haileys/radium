@@ -9,7 +9,7 @@
 #include "util.h"
 
 static_assert(tss_t_is_0x68_bytes_long, sizeof(tss_t) == 0x68);
-static_assert(task_t_is_540_bytes_long, sizeof(task_t) == 540);
+static_assert(task_t_is_540_bytes_long, sizeof(task_t) == 548);
 
 static tss_t
 tss;
@@ -39,6 +39,7 @@ alloc_empty_task()
         }
 
         tasks[pid] = kernel_page_alloc_zeroed();
+        tasks[pid]->state = TASK_READY;
         tasks[pid]->pid = pid;
         return tasks[pid];
     }
@@ -180,9 +181,31 @@ task_destroy(task_t* task)
 task_t*
 sched_next()
 {
-    task_t* two = task_for_pid(2);
-    if(two) {
-        return current_task = two;
+    uint32_t current_pid = current_task->pid;
+
+    for(size_t i = current_pid + 1; i < countof(tasks); i++) {
+        task_t* task = task_for_pid(i);
+
+        if(!task) {
+            continue;
+        }
+
+        if(task->state == TASK_READY) {
+            return task;
+        }
     }
-    return current_task;
+
+    for(size_t i = 1; i <= current_pid; i++) {
+        task_t* task = task_for_pid(i);
+
+        if(!task) {
+            continue;
+        }
+
+        if(task->state == TASK_READY) {
+            return task;
+        }
+    }
+
+    panic("no tasks ready to schedule!");
 }

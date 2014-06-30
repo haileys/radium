@@ -73,6 +73,13 @@ typedef struct {
 } __attribute__((packed))
 tss_t;
 
+typedef enum {
+    TASK_READY   = 1,
+    TASK_SLEEP   = 2,
+    TASK_EXITING = 3,
+}
+task_state_t;
+
 // sched.asm refers to hardcoded offsets within this struct.
 // make sure to change it when changing anything here.
 typedef struct {
@@ -85,7 +92,8 @@ typedef struct {
     /* 528 */ phys_t page_directory_phys;
     /* 532 */ registers_t* syscall_registers;
     /* 536 */ uint32_t pid;
-    /* 540 */
+    /* 540 */ task_state_t state;
+    /* 544 */ uint8_t exit_status;
 }
 task_t;
 

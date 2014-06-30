@@ -38,6 +38,7 @@ sched_switch:
     mov task_eip(eax), dword .return
 
     call sched_next
+    mov [current_task], eax
 
     mov ebx, task_page_dir_phys(eax)
     mov cr3, ebx

@@ -21,4 +21,7 @@ streq(const char* a, const char* b);
 void
 strlcpy(char* dest, const char* src, size_t dest_total_size);
 
+size_t
+strlen(const char* str);
+
 #endif

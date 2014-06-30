@@ -74,3 +74,15 @@ strlcpy(char* dest, const char* src, size_t dest_total_size)
 
     *dest = 0;
 }
+
+size_t
+strlen(const char* str)
+{
+    size_t len = 0;
+
+    while(*str++) {
+        len++;
+    }
+
+    return len;
+}
